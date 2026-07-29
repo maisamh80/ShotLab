@@ -196,6 +196,8 @@ visual storytelling.
 
 <a id="فارسی"></a>
 
+<div dir="rtl" align="right">
+
 ## 🎬 دربارهٔ ShotLab
 
 ShotLab ابزاری است که در ابتدا برای استفادهٔ شخصی خودم و با روش Vibe Coding
@@ -375,3 +377,5 @@ ShotLab یک نرم‌افزار آزاد است و تحت
 
 ShotLab توسط **میثم حسنی** در **StoryEco — Storytellers Ecosystem** ساخته شده
 است؛ اکوسیستمی برای ابزارها، گردش‌های کاری و زیرساخت روایتگری تصویری.
+
+</div>
