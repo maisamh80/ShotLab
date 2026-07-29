@@ -1,7 +1,7 @@
 # ShotLab
 
 <p align="center">
-  <img src="assets/final_ui/logo.svg" alt="ShotLab" width="320">
+  <img src="assets/final_ui/shotlab-logo-gold.svg" alt="ShotLab" width="320">
 </p>
 
 <p align="center">
@@ -200,74 +200,74 @@ visual storytelling.
 
 ## 🎬 دربارهٔ ShotLab
 
-ShotLab ابزاری است که در ابتدا برای استفادهٔ شخصی خودم و با روش Vibe Coding
-در ChatGPT ساختم. اکنون آن را به‌رایگان در اختیار دیگران قرار می‌دهم تا
+<bdi dir="ltr">ShotLab</bdi> ابزاری است که در ابتدا برای استفادهٔ شخصی خودم و با روش <bdi dir="ltr">Vibe Coding</bdi>
+در <bdi dir="ltr">ChatGPT</bdi> ساختم. اکنون آن را به‌رایگان در اختیار دیگران قرار می‌دهم تا
 فیلم‌سازان، فیلم‌برداران، هنرمندان نورپردازی، کالریست‌ها، انیماتورها و
-روایتگران تصویری بتوانند Visual Memory شخصی خودشان را بسازند.
+روایتگران تصویری بتوانند <bdi dir="ltr">Visual Memory</bdi> شخصی خودشان را بسازند.
 
-ShotLab به‌جای آنکه تصاویر را با هوش مصنوعی توصیف یا تفسیر کند، تصمیم‌های
+<bdi dir="ltr">ShotLab</bdi> به‌جای آنکه تصاویر را با هوش مصنوعی توصیف یا تفسیر کند، تصمیم‌های
 خلاقانه را در اختیار خود شما نگه می‌دارد. نرم‌افزار فقط پالت رنگی عینی هر
 فریم را استخراج می‌کند و عنوان، اطلاعات نما، مود، تگ‌ها و یادداشت‌ها کاملاً
 توسط شما وارد و ویرایش می‌شوند.
 
-ShotLab به‌صورت لوکال کار می‌کند. ویدئوهای اصلی روی کامپیوتر شما باقی
+<bdi dir="ltr">ShotLab</bdi> به‌صورت لوکال کار می‌کند. ویدئوهای اصلی روی کامپیوتر شما باقی
 می‌مانند و هرگز داخل دیتابیس کپی یا همراه خروجی کتابخانه ذخیره نمی‌شوند.
 
 ## ✨ امکانات
 
 - ساخت کتابخانه‌های تصویری مستقل برای فیلم‌ها، پروژه‌ها یا موضوعات پژوهشی
 - پخش ویدئوی لوکال با تایملاین دقیق
-- کپچر دقیق همان فریمی که در Player نمایش داده می‌شود
+- کپچر دقیق همان فریمی که در <bdi dir="ltr">Player</bdi> نمایش داده می‌شود
 - پیمایش فریم‌به‌فریم به جلو و عقب
 - ورود دستی تصاویر ثابت در کنار کپچر از ویدئو
 - استخراج پالت پنج‌رنگ همراه درصد واقعی پوشش هر رنگ در تصویر
-- کپی مستقیم کد HEX رنگ‌های پالت
+- کپی مستقیم کد <bdi dir="ltr">HEX</bdi> رنگ‌های پالت
 - ثبت و ویرایش اندازهٔ نما، زاویهٔ دوربین، محیط، نوع لنز، زمان، سبک
-  نورپردازی، کیفیت نور Key، مود، تگ‌ها، عنوان و یادداشت
+  نورپردازی، کیفیت نور <bdi dir="ltr">Key</bdi>، مود، تگ‌ها، عنوان و یادداشت
 - جست‌وجو در تمام اطلاعاتی که کاربر وارد کرده است
-- فیلتر براساس دسته‌بندی‌ها، کد HEX یا رنگ‌های نزدیک از نظر ادراکی
-- مرور فریم‌ها در فضای کاری اختصاصی Gallery
-- تغییر مستقل اندازهٔ Thumbnailها در Capture و Gallery
+- فیلتر براساس دسته‌بندی‌ها، کد <bdi dir="ltr">HEX</bdi> یا رنگ‌های نزدیک از نظر ادراکی
+- مرور فریم‌ها در فضای کاری اختصاصی <bdi dir="ltr">Gallery</bdi>
+- تغییر مستقل اندازهٔ <bdi dir="ltr">Thumbnail</bdi>ها در <bdi dir="ltr">Capture</bdi> و <bdi dir="ltr">Gallery</bdi>
 - دانلود فریم‌ها با اندازهٔ کوچک، متوسط یا رزولوشن اصلی
-- خروجی و بازیابی کامل کتابخانه‌های ShotLab بدون ویدئوی منبع
-- ساخت PDF رفرنس با چیدمان یک، دو یا سه ستون
-- رابط فارسی و انگلیسی با فونت‌های داخلی Inter و Vazirmatn
+- خروجی و بازیابی کامل کتابخانه‌های <bdi dir="ltr">ShotLab</bdi> بدون ویدئوی منبع
+- ساخت <bdi dir="ltr">PDF</bdi> رفرنس با چیدمان یک، دو یا سه ستون
+- رابط فارسی و انگلیسی با فونت‌های داخلی <bdi dir="ltr">Inter</bdi> و <bdi dir="ltr">Vazirmatn</bdi>
 - پوستهٔ روشن و تیره
 - کارکرد کاملاً آفلاین پس از آماده‌سازی اولیهٔ محیط توسعه
 
 ## 🧩 مشخصات فنی
 
-ShotLab یک نرم‌افزار دسکتاپ ویندوز است که با فناوری‌های زیر ساخته شده:
+<bdi dir="ltr">ShotLab</bdi> یک نرم‌افزار دسکتاپ ویندوز است که با فناوری‌های زیر ساخته شده:
 
 | بخش | فناوری |
 | --- | --- |
-| زبان برنامه‌نویسی | Python 3.11+ |
-| رابط دسکتاپ | PySide6 / Qt 6 |
-| دیتابیس | SQLite |
-| پردازش تصویر | Pillow |
-| اطلاعات و استخراج فریم ویدئو | FFmpeg / FFprobe |
-| خروجی PDF | سیستم ترسیم PDF در Qt |
-| بسته‌بندی ویندوز | PyInstaller |
-| ساخت Installer | Inno Setup 7 |
+| زبان برنامه‌نویسی | <bdi dir="ltr">Python 3.11+</bdi> |
+| رابط دسکتاپ | <bdi dir="ltr">PySide6 / Qt 6</bdi> |
+| دیتابیس | <bdi dir="ltr">SQLite</bdi> |
+| پردازش تصویر | <bdi dir="ltr">Pillow</bdi> |
+| اطلاعات و استخراج فریم ویدئو | <bdi dir="ltr">FFmpeg / FFprobe</bdi> |
+| خروجی <bdi dir="ltr">PDF</bdi> | سیستم ترسیم <bdi dir="ltr">PDF</bdi> در <bdi dir="ltr">Qt</bdi> |
+| بسته‌بندی ویندوز | <bdi dir="ltr">PyInstaller</bdi> |
+| ساخت <bdi dir="ltr">Installer</bdi> | <bdi dir="ltr">Inno Setup 7</bdi> |
 | زبان‌های رابط | فارسی و انگلیسی |
-| فونت‌های داخلی | Inter و Vazirmatn |
+| فونت‌های داخلی | <bdi dir="ltr">Inter</bdi> و <bdi dir="ltr">Vazirmatn</bdi> |
 
 ساختار برنامه به ماژول‌های مستقل تقسیم شده است:
 
-- `repository.py` مدیریت رکوردهای SQLite، Manifestها، فریم‌ها و پوشه‌های
+- <bdi dir="ltr"><code>repository.py</code></bdi> مدیریت رکوردهای <bdi dir="ltr">SQLite</bdi>، <bdi dir="ltr">Manifest</bdi>ها، فریم‌ها و پوشه‌های
   کتابخانه را انجام می‌دهد.
-- `session.py` ویدئوی فعال و Draftهای کپچر را مدیریت می‌کند.
-- `media.py` مسئول FFmpeg، FFprobe، Fingerprint، Timecode و استخراج فریم است.
-- `analysis.py` Thumbnail و پالت رنگی غالب را تولید می‌کند.
-- `backup.py` خروجی، اعتبارسنجی، بازیابی و Recovery کتابخانه‌ها را انجام
+- <bdi dir="ltr"><code>session.py</code></bdi> ویدئوی فعال و <bdi dir="ltr">Draft</bdi>های کپچر را مدیریت می‌کند.
+- <bdi dir="ltr"><code>media.py</code></bdi> مسئول <bdi dir="ltr">FFmpeg</bdi>، <bdi dir="ltr">FFprobe</bdi>، <bdi dir="ltr">Fingerprint</bdi>، <bdi dir="ltr">Timecode</bdi> و استخراج فریم است.
+- <bdi dir="ltr"><code>analysis.py</code></bdi> <bdi dir="ltr">Thumbnail</bdi> و پالت رنگی غالب را تولید می‌کند.
+- <bdi dir="ltr"><code>backup.py</code></bdi> خروجی، اعتبارسنجی، بازیابی و <bdi dir="ltr">Recovery</bdi> کتابخانه‌ها را انجام
   می‌دهد.
-- `pdf_export.py` شیت‌های PDF رفرنس را می‌سازد.
-- پوشهٔ `ui/` شامل رابط PySide6، پوسته‌ها، Dialogها و Widgetهای اختصاصی است.
-- `i18n.py` متن‌های فارسی و انگلیسی و Taxonomy نرم‌افزار را نگهداری می‌کند.
+- <bdi dir="ltr"><code>pdf_export.py</code></bdi> شیت‌های <bdi dir="ltr">PDF</bdi> رفرنس را می‌سازد.
+- پوشهٔ <bdi dir="ltr"><code>ui/</code></bdi> شامل رابط <bdi dir="ltr">PySide6</bdi>، پوسته‌ها، <bdi dir="ltr">Dialog</bdi>ها و <bdi dir="ltr">Widget</bdi>های اختصاصی است.
+- <bdi dir="ltr"><code>i18n.py</code></bdi> متن‌های فارسی و انگلیسی و <bdi dir="ltr">Taxonomy</bdi> نرم‌افزار را نگهداری می‌کند.
 
 ## 💾 ساختار داده و حریم خصوصی
 
-ShotLab به‌صورت پیش‌فرض داده‌های کاری را در این مسیر ذخیره می‌کند:
+<bdi dir="ltr">ShotLab</bdi> به‌صورت پیش‌فرض داده‌های کاری را در این مسیر ذخیره می‌کند:
 
 ```text
 %LOCALAPPDATA%\ShotLab
@@ -285,10 +285,10 @@ projects/
     └── .drafts/
 ```
 
-SQLite ایندکس اصلی و قابل جست‌وجوی برنامه است. هر کتابخانه علاوه‌بر آن یک
-Manifest با نام `project.json` و فریم‌های استخراج‌شدهٔ خودش را نگهداری
-می‌کند. ویدئوی اصلی در SQLite ذخیره نمی‌شود، داخل پروژه کپی نمی‌شود و در
-خروجی‌های `.shotlab` قرار نمی‌گیرد. فقط آدرس لوکال آن در تنظیمات برنامه به
+<bdi dir="ltr">SQLite</bdi> ایندکس اصلی و قابل جست‌وجوی برنامه است. هر کتابخانه علاوه‌بر آن یک
+<bdi dir="ltr">Manifest</bdi> با نام <bdi dir="ltr"><code>project.json</code></bdi> و فریم‌های استخراج‌شدهٔ خودش را نگهداری
+می‌کند. ویدئوی اصلی در <bdi dir="ltr">SQLite</bdi> ذخیره نمی‌شود، داخل پروژه کپی نمی‌شود و در
+خروجی‌های <bdi dir="ltr"><code>.shotlab</code></bdi> قرار نمی‌گیرد. فقط آدرس لوکال آن در تنظیمات برنامه به
 خاطر سپرده می‌شود تا در صورت موجودبودن فایل، در مراجعهٔ بعدی دوباره باز شود.
 
 ## 🛠️ اجرای سورس
@@ -296,10 +296,10 @@ Manifest با نام `project.json` و فریم‌های استخراج‌شده
 پیش‌نیازها:
 
 - ویندوز ۱۰ یا ۱۱ نسخهٔ ۶۴ بیتی
-- Python 3.11 یا جدیدتر
-- نسخهٔ Static و ۶۴ بیتی معتبر `ffmpeg.exe` و `ffprobe.exe`
+- <bdi dir="ltr">Python 3.11</bdi> یا جدیدتر
+- نسخهٔ <bdi dir="ltr">Static</bdi> و ۶۴ بیتی معتبر <bdi dir="ltr"><code>ffmpeg.exe</code></bdi> و <bdi dir="ltr"><code>ffprobe.exe</code></bdi>
 
-فایل‌های FFmpeg را در این مسیر قرار دهید:
+فایل‌های <bdi dir="ltr">FFmpeg</bdi> را در این مسیر قرار دهید:
 
 ```text
 vendor/
@@ -314,13 +314,13 @@ vendor/
 setup_windows.bat
 ```
 
-پس از آن ShotLab را بدون نصب دوبارهٔ Dependencyها اجرا کنید:
+پس از آن <bdi dir="ltr">ShotLab</bdi> را بدون نصب دوبارهٔ <bdi dir="ltr">Dependency</bdi>ها اجرا کنید:
 
 ```bat
 run_windows.bat
 ```
 
-برای ساخت Cache آفلاین اختیاری از Dependencyهای Python:
+برای ساخت <bdi dir="ltr">Cache</bdi> آفلاین اختیاری از <bdi dir="ltr">Dependency</bdi>های <bdi dir="ltr">Python</bdi>:
 
 ```bat
 cache_windows_dependencies.bat
@@ -328,14 +328,14 @@ cache_windows_dependencies.bat
 
 ## 📦 ساخت نسخهٔ پرتابل و نصبی
 
-ابتدا نسخهٔ ۶۴ بیتی Inno Setup 7 را نصب و سپس اجرا کنید:
+ابتدا نسخهٔ ۶۴ بیتی <bdi dir="ltr">Inno Setup 7</bdi> را نصب و سپس اجرا کنید:
 
 ```bat
 publish_windows.bat
 ```
 
-این اسکریپت آزمون‌های کنترل کیفیت را اجرا می‌کند، نرم‌افزار را با PyInstaller
-می‌سازد، فایل پرتابل را ایجاد می‌کند و Installer ویندوز را می‌سازد.
+این اسکریپت آزمون‌های کنترل کیفیت را اجرا می‌کند، نرم‌افزار را با <bdi dir="ltr">PyInstaller</bdi>
+می‌سازد، فایل پرتابل را ایجاد می‌کند و <bdi dir="ltr">Installer</bdi> ویندوز را می‌سازد.
 
 فایل‌های نهایی در این مسیر ایجاد می‌شوند:
 
@@ -345,7 +345,7 @@ release/
 └── ShotLab_Setup_v1.0.0.exe
 ```
 
-برای ساختن فقط پوشهٔ مستقیم برنامه با PyInstaller:
+برای ساختن فقط پوشهٔ مستقیم برنامه با <bdi dir="ltr">PyInstaller</bdi>:
 
 ```bat
 build_windows.bat
@@ -358,24 +358,24 @@ dist\ShotLab\ShotLab.exe
 ```
 
 فایل اجرایی به فایل‌های کنارش وابسته است؛ بنابراین پوشهٔ کامل
-`dist\ShotLab` را منتشر کنید یا از ZIP پرتابل ساخته‌شده استفاده کنید.
+<bdi dir="ltr"><code>dist\ShotLab</code></bdi> را منتشر کنید یا از <bdi dir="ltr">ZIP</bdi> پرتابل ساخته‌شده استفاده کنید.
 
 ## ⬇️ دانلود
 
-کاربرانی که نمی‌خواهند ShotLab را کامپایل کنند می‌توانند آخرین نسخهٔ نصبی و
+کاربرانی که نمی‌خواهند <bdi dir="ltr">ShotLab</bdi> را کامپایل کنند می‌توانند آخرین نسخهٔ نصبی و
 پرتابل ویندوز را از
 [بخش Releases گیت‌هاب](https://github.com/maisamh80/ShotLab/releases)
 دانلود کنند.
 
 ## 📄 مجوز
 
-ShotLab یک نرم‌افزار آزاد است و تحت
-[GNU General Public License v3.0](LICENSE)
+<bdi dir="ltr">ShotLab</bdi> یک نرم‌افزار آزاد است و تحت
+[<bdi dir="ltr">GNU General Public License v3.0</bdi>](LICENSE)
 منتشر می‌شود.
 
 ## 🌱 StoryEco
 
-ShotLab توسط **میثم حسنی** در **StoryEco — Storytellers Ecosystem** ساخته شده
+<bdi dir="ltr">ShotLab</bdi> توسط **میثم حسنی** در **<bdi dir="ltr">StoryEco — Storytellers Ecosystem</bdi>** ساخته شده
 است؛ اکوسیستمی برای ابزارها، گردش‌های کاری و زیرساخت روایتگری تصویری.
 
 </div>
