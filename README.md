@@ -5,6 +5,10 @@
 </p>
 
 <p align="center">
+  <strong>Windows Version</strong>
+</p>
+
+<p align="center">
   A local visual-reference library for building your own visual memory.
 </p>
 
@@ -191,6 +195,8 @@ ShotLab is free software released under the
 ShotLab was created by **Maisam Hosaini** within the **StoryEco — Storytellers
 Ecosystem**, an initiative focused on tools, workflows, and infrastructure for
 visual storytelling.
+
+Website: [storyeco.xyz](https://storyeco.xyz)
 
 ---
 
@@ -393,5 +399,7 @@ dist\ShotLab\ShotLab.exe
 
 <bdi dir="ltr">ShotLab</bdi> توسط **میثم حسنی** در **<bdi dir="ltr">StoryEco — Storytellers Ecosystem</bdi>** ساخته شده
 است؛ اکوسیستمی برای ابزارها، گردش‌های کاری و زیرساخت روایتگری تصویری.
+
+وب‌سایت: <a dir="ltr" href="https://storyeco.xyz">storyeco.xyz</a>
 
 </div>
