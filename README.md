@@ -5,11 +5,11 @@
 </p>
 
 <p align="center">
-  <strong>Windows Version</strong>
+  A local visual-reference library for building your own visual memory.
 </p>
 
 <p align="center">
-  A local visual-reference library for building your own visual memory.
+  <img src="assets/final_ui/windows-version-badge.svg" alt="Windows Version" width="164">
 </p>
 
 <p align="center">
