@@ -1,0 +1,10 @@
+.venv/
+.buildenv/
+build/
+dist/
+release/
+vendor/ffmpeg/*.exe
+vendor/wheels/
+__pycache__/
+*.py[cod]
+.pytest_cache/
