@@ -198,20 +198,20 @@ visual storytelling.
 
 <div dir="rtl" align="right">
 
-## 🎬 دربارهٔ ShotLab
+## 🎬 دربارهٔ شات‌لب
 
-<bdi dir="ltr">ShotLab</bdi> ابزاری است که در ابتدا برای استفادهٔ شخصی خودم و با روش <bdi dir="ltr">Vibe Coding</bdi>
-در <bdi dir="ltr">ChatGPT</bdi> ساختم. اکنون آن را به‌رایگان در اختیار دیگران قرار می‌دهم تا
+شات‌لب ابزاری است که در ابتدا برای استفادهٔ شخصی خودم و با روش وایب‌کدینگ
+در چت‌جی‌پی‌تی ساختم. اکنون آن را به‌رایگان در اختیار دیگران قرار می‌دهم تا
 فیلم‌سازان، فیلم‌برداران، هنرمندان نورپردازی، کالریست‌ها، انیماتورها و
-روایتگران تصویری بتوانند <bdi dir="ltr">Visual Memory</bdi> شخصی خودشان را بسازند.
+روایتگران تصویری بتوانند حافظهٔ تصویری شخصی خودشان را بسازند.
 
-<bdi dir="ltr">ShotLab</bdi> به‌جای آنکه تصاویر را با هوش مصنوعی توصیف یا تفسیر کند، تصمیم‌های
+شات‌لب به‌جای آنکه تصاویر را با هوش مصنوعی توصیف یا تفسیر کند، تصمیم‌های
 خلاقانه را در اختیار خود شما نگه می‌دارد. نرم‌افزار فقط پالت رنگی عینی هر
 فریم را استخراج می‌کند و عنوان، اطلاعات نما، مود، تگ‌ها و یادداشت‌ها کاملاً
 توسط شما وارد و ویرایش می‌شوند.
 
-<bdi dir="ltr">ShotLab</bdi> به‌صورت لوکال کار می‌کند. ویدئوهای اصلی روی کامپیوتر شما باقی
-می‌مانند و هرگز داخل دیتابیس کپی یا همراه خروجی کتابخانه ذخیره نمی‌شوند.
+شات‌لب به‌صورت محلی کار می‌کند. ویدئوهای اصلی روی کامپیوتر شما باقی
+می‌مانند و هرگز داخل پایگاه داده کپی یا همراه خروجی کتابخانه ذخیره نمی‌شوند.
 
 ## ✨ امکانات
 
@@ -237,33 +237,49 @@ visual storytelling.
 
 ## 🧩 مشخصات فنی
 
-<bdi dir="ltr">ShotLab</bdi> یک نرم‌افزار دسکتاپ ویندوز است که با فناوری‌های زیر ساخته شده:
+شات‌لب یک نرم‌افزار دسکتاپ ویندوز است که با فناوری‌های زیر ساخته شده:
 
-| بخش | فناوری |
-| --- | --- |
-| زبان برنامه‌نویسی | <bdi dir="ltr">Python 3.11+</bdi> |
-| رابط دسکتاپ | <bdi dir="ltr">PySide6 / Qt 6</bdi> |
-| دیتابیس | <bdi dir="ltr">SQLite</bdi> |
-| پردازش تصویر | <bdi dir="ltr">Pillow</bdi> |
-| اطلاعات و استخراج فریم ویدئو | <bdi dir="ltr">FFmpeg / FFprobe</bdi> |
-| خروجی <bdi dir="ltr">PDF</bdi> | سیستم ترسیم <bdi dir="ltr">PDF</bdi> در <bdi dir="ltr">Qt</bdi> |
-| بسته‌بندی ویندوز | <bdi dir="ltr">PyInstaller</bdi> |
-| ساخت <bdi dir="ltr">Installer</bdi> | <bdi dir="ltr">Inno Setup 7</bdi> |
-| زبان‌های رابط | فارسی و انگلیسی |
-| فونت‌های داخلی | <bdi dir="ltr">Inter</bdi> و <bdi dir="ltr">Vazirmatn</bdi> |
+<table dir="rtl">
+  <thead>
+    <tr>
+      <th align="right">بخش</th>
+      <th align="left">فناوری</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td align="right">زبان برنامه‌نویسی</td><td dir="ltr" align="left"><code>Python 3.11+</code></td></tr>
+    <tr><td align="right">رابط دسکتاپ</td><td dir="ltr" align="left"><code>PySide6 / Qt 6</code></td></tr>
+    <tr><td align="right">پایگاه داده</td><td dir="ltr" align="left"><code>SQLite</code></td></tr>
+    <tr><td align="right">پردازش تصویر</td><td dir="ltr" align="left"><code>Pillow</code></td></tr>
+    <tr><td align="right">اطلاعات و استخراج فریم ویدئو</td><td dir="ltr" align="left"><code>FFmpeg / FFprobe</code></td></tr>
+    <tr><td align="right">خروجی پی‌دی‌اف</td><td dir="ltr" align="left"><code>Qt PDF painting</code></td></tr>
+    <tr><td align="right">بسته‌بندی ویندوز</td><td dir="ltr" align="left"><code>PyInstaller</code></td></tr>
+    <tr><td align="right">ساخت فایل نصبی</td><td dir="ltr" align="left"><code>Inno Setup 7</code></td></tr>
+    <tr><td align="right">زبان‌های رابط</td><td align="right">فارسی و انگلیسی</td></tr>
+    <tr><td align="right">فونت‌های داخلی</td><td dir="ltr" align="left"><code>Inter / Vazirmatn</code></td></tr>
+  </tbody>
+</table>
 
 ساختار برنامه به ماژول‌های مستقل تقسیم شده است:
 
-- <bdi dir="ltr"><code>repository.py</code></bdi> مدیریت رکوردهای <bdi dir="ltr">SQLite</bdi>، <bdi dir="ltr">Manifest</bdi>ها، فریم‌ها و پوشه‌های
-  کتابخانه را انجام می‌دهد.
-- <bdi dir="ltr"><code>session.py</code></bdi> ویدئوی فعال و <bdi dir="ltr">Draft</bdi>های کپچر را مدیریت می‌کند.
-- <bdi dir="ltr"><code>media.py</code></bdi> مسئول <bdi dir="ltr">FFmpeg</bdi>، <bdi dir="ltr">FFprobe</bdi>، <bdi dir="ltr">Fingerprint</bdi>، <bdi dir="ltr">Timecode</bdi> و استخراج فریم است.
-- <bdi dir="ltr"><code>analysis.py</code></bdi> <bdi dir="ltr">Thumbnail</bdi> و پالت رنگی غالب را تولید می‌کند.
-- <bdi dir="ltr"><code>backup.py</code></bdi> خروجی، اعتبارسنجی، بازیابی و <bdi dir="ltr">Recovery</bdi> کتابخانه‌ها را انجام
-  می‌دهد.
-- <bdi dir="ltr"><code>pdf_export.py</code></bdi> شیت‌های <bdi dir="ltr">PDF</bdi> رفرنس را می‌سازد.
-- پوشهٔ <bdi dir="ltr"><code>ui/</code></bdi> شامل رابط <bdi dir="ltr">PySide6</bdi>، پوسته‌ها، <bdi dir="ltr">Dialog</bdi>ها و <bdi dir="ltr">Widget</bdi>های اختصاصی است.
-- <bdi dir="ltr"><code>i18n.py</code></bdi> متن‌های فارسی و انگلیسی و <bdi dir="ltr">Taxonomy</bdi> نرم‌افزار را نگهداری می‌کند.
+<table dir="rtl">
+  <thead>
+    <tr>
+      <th dir="ltr" align="left">Module</th>
+      <th align="right">وظیفه</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td dir="ltr" align="left"><code>repository.py</code></td><td align="right">مدیریت رکوردهای پایگاه داده، فایل‌های راهنما، فریم‌ها و پوشه‌های کتابخانه</td></tr>
+    <tr><td dir="ltr" align="left"><code>session.py</code></td><td align="right">مدیریت ویدئوی فعال و پیش‌نویس‌های کپچر</td></tr>
+    <tr><td dir="ltr" align="left"><code>media.py</code></td><td align="right">مدیریت اطلاعات ویدئو، اثر انگشت، تایم‌کد و استخراج فریم</td></tr>
+    <tr><td dir="ltr" align="left"><code>analysis.py</code></td><td align="right">تولید تصاویر بندانگشتی و محاسبهٔ پالت رنگی غالب</td></tr>
+    <tr><td dir="ltr" align="left"><code>backup.py</code></td><td align="right">خروجی، اعتبارسنجی، بازیابی و ترمیم کتابخانه‌ها</td></tr>
+    <tr><td dir="ltr" align="left"><code>pdf_export.py</code></td><td align="right">ساخت شیت‌های مرجع پی‌دی‌اف</td></tr>
+    <tr><td dir="ltr" align="left"><code>ui/</code></td><td align="right">رابط کاربری، پوسته‌ها، پنجره‌ها و اجزای اختصاصی</td></tr>
+    <tr><td dir="ltr" align="left"><code>i18n.py</code></td><td align="right">متن‌های فارسی و انگلیسی و دسته‌بندی‌های نرم‌افزار</td></tr>
+  </tbody>
+</table>
 
 ## 💾 ساختار داده و حریم خصوصی
 
