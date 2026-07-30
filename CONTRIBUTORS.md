@@ -14,8 +14,8 @@
 The original idea, creative direction, product decisions, and final approval
 belong to Maisam Hosaini.
 
-*Made with cinema, code, curiosity, and a suspicious number of tiny interface
-refinements.* 😄
+*Made with cinema, code, curiosity, and a suspicious amount of effort to bring
+it to life.* 😄
 
 ---
 
@@ -34,6 +34,6 @@ refinements.* 😄
 
 ایدهٔ اصلی، هدایت خلاقه، تصمیم‌های محصول و تأیید نهایی متعلق به میثم حسینی است.
 
-*ساخته‌شده با سینما، کد، کنجکاوی و تعداد مشکوکی اصلاحات ریز رابط کاربری.* 😄
+*ساخته‌شده با سینما، کد، کنجکاوی و میزان مشکوکی تلاش برای پیاده سازی* 😄
 
 </div>
