@@ -203,6 +203,12 @@ Users who do not want to compile ShotLab can download the latest Windows
 installer and portable package from the
 [GitHub Releases page](https://github.com/maisamh80/ShotLab/releases).
 
+## 🤝 Contributors
+
+ShotLab is a human × AI collaboration — imagined by **Maisam Hosaini** and
+built together with **ChatGPT by OpenAI**. See
+[CONTRIBUTORS.md](CONTRIBUTORS.md) for credits and roles.
+
 ## 📄 License
 
 ShotLab is free software released under the
@@ -422,6 +428,14 @@ dist\ShotLab\ShotLab.exe
 پرتابل ویندوز را از
 [بخش Releases گیت‌هاب](https://github.com/maisamh80/ShotLab/releases)
 دانلود کنند.
+
+## 🤝 مشارکت‌کنندگان
+
+شات‌لب حاصل یک همکاری انسان × هوش مصنوعی است؛ ایده و هدایت آن با **میثم حسنی**
+و ساخت آن در همکاری با **<bdi dir="ltr">ChatGPT by OpenAI</bdi>** انجام شده
+است. برای مشاهدهٔ اعتبارها و نقش‌ها به
+[فایل مشارکت‌کنندگان](CONTRIBUTORS.md)
+مراجعه کنید.
 
 ## 📄 مجوز
 
