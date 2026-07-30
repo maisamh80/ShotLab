@@ -431,7 +431,7 @@ dist\ShotLab\ShotLab.exe
 
 ## 🤝 مشارکت‌کنندگان
 
-شات‌لب حاصل یک همکاری انسان × هوش مصنوعی است؛ ایده و هدایت آن با **میثم حسنی**
+شات‌لب حاصل یک همکاری انسان × هوش مصنوعی است؛ ایده و هدایت آن با **میثم حسینی**
 و ساخت آن در همکاری با **<bdi dir="ltr">ChatGPT by OpenAI</bdi>** انجام شده
 است. برای مشاهدهٔ اعتبارها و نقش‌ها به
 [فایل مشارکت‌کنندگان](CONTRIBUTORS.md)
@@ -445,7 +445,7 @@ dist\ShotLab\ShotLab.exe
 
 ## 🌱 StoryEco
 
-<bdi dir="ltr">ShotLab</bdi> توسط **میثم حسنی** در **<bdi dir="ltr">StoryEco — Storytellers Ecosystem</bdi>** ساخته شده
+<bdi dir="ltr">ShotLab</bdi> توسط **میثم حسینی** در **<bdi dir="ltr">StoryEco — Storytellers Ecosystem</bdi>** ساخته شده
 است؛ اکوسیستمی برای ابزارها، گردش‌های کاری و زیرساخت روایتگری تصویری.
 
 وب‌سایت: <a dir="ltr" href="https://storyeco.xyz">storyeco.xyz</a>
