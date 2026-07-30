@@ -31,6 +31,7 @@ class Capture:
     editorial: dict[str, Any]
     created_at: str
     updated_at: str
+    annotations: list[dict[str, Any]] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -67,4 +68,3 @@ class CaptureDraft:
     thumbnail_path: str
     analysis: dict[str, Any]
     editorial: dict[str, Any]
-

@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS captures (
     thumbnail_rel_path TEXT NOT NULL,
     analysis_json TEXT NOT NULL,
     editorial_json TEXT NOT NULL,
+    annotations_json TEXT NOT NULL DEFAULT '[]',
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
     FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE,
@@ -89,6 +90,17 @@ class Repository:
     def _initialize(self) -> None:
         with self._connect() as connection:
             connection.executescript(SCHEMA)
+            columns = {
+                str(row["name"])
+                for row in connection.execute(
+                    "PRAGMA table_info(captures)"
+                ).fetchall()
+            }
+            if "annotations_json" not in columns:
+                connection.execute(
+                    "ALTER TABLE captures ADD COLUMN "
+                    "annotations_json TEXT NOT NULL DEFAULT '[]'"
+                )
             connection.execute(f"PRAGMA user_version = {SCHEMA_VERSION}")
 
     def project_folder(self, project_id: str) -> Path:
@@ -384,6 +396,42 @@ class Repository:
             raise KeyError(capture_id)
         return capture
 
+    def update_capture_annotations(
+        self,
+        capture_id: str,
+        annotations: list[dict[str, Any]],
+    ) -> Capture:
+        now = _utc_now()
+        with self._connect() as connection:
+            row = connection.execute(
+                "SELECT project_id FROM captures WHERE id = ?",
+                (capture_id,),
+            ).fetchone()
+            if not row:
+                raise KeyError(capture_id)
+            project_id = str(row["project_id"])
+            connection.execute(
+                """
+                UPDATE captures
+                SET annotations_json = ?, updated_at = ?
+                WHERE id = ?
+                """,
+                (
+                    json.dumps(annotations, ensure_ascii=False),
+                    now,
+                    capture_id,
+                ),
+            )
+            connection.execute(
+                "UPDATE projects SET updated_at = ? WHERE id = ?",
+                (now, project_id),
+            )
+        self.write_manifest(project_id)
+        capture = self.get_capture(capture_id)
+        if capture is None:
+            raise KeyError(capture_id)
+        return capture
+
     def delete_capture(self, capture_id: str) -> Path:
         capture = self.get_capture(capture_id)
         if capture is None:
@@ -408,7 +456,12 @@ class Repository:
 
         moved_files: list[tuple[Path, Path]] = []
         try:
-            for source in (image_path, thumbnail_path):
+            for source in (
+                image_path,
+                thumbnail_path,
+                self.annotated_image_path(capture),
+                self.annotated_thumbnail_path(capture),
+            ):
                 if not source.is_file():
                     continue
                 destination = recovery / source.name
@@ -625,7 +678,7 @@ class Repository:
         with self._connect() as connection:
             rows = connection.execute(
                 """
-                SELECT thumbnail_rel_path FROM captures
+                SELECT * FROM captures
                 WHERE project_id = ?
                 ORDER BY capture_number DESC
                 LIMIT ?
@@ -633,9 +686,43 @@ class Repository:
                 (project_id, max(1, int(limit))),
             ).fetchall()
         return [
-            self.resolve_project_file(project_id, str(row["thumbnail_rel_path"]))
+            self.display_thumbnail_path(self._capture_from_row(row))
             for row in reversed(rows)
         ]
+
+    def annotated_image_path(self, capture: Capture) -> Path:
+        return (
+            self.project_folder(capture.project_id)
+            / "captures"
+            / "annotated"
+            / f"{capture.id}.png"
+        )
+
+    def annotated_thumbnail_path(self, capture: Capture) -> Path:
+        return (
+            self.project_folder(capture.project_id)
+            / "captures"
+            / "annotated"
+            / f"{capture.id}_thumb.png"
+        )
+
+    def display_image_path(self, capture: Capture) -> Path:
+        annotated = self.annotated_image_path(capture)
+        if capture.annotations and annotated.is_file():
+            return annotated
+        return self.resolve_project_file(
+            capture.project_id,
+            capture.image_rel_path,
+        )
+
+    def display_thumbnail_path(self, capture: Capture) -> Path:
+        annotated = self.annotated_thumbnail_path(capture)
+        if capture.annotations and annotated.is_file():
+            return annotated
+        return self.resolve_project_file(
+            capture.project_id,
+            capture.thumbnail_rel_path,
+        )
 
     def discard_draft(self, draft: CaptureDraft) -> None:
         Path(draft.image_path).unlink(missing_ok=True)
@@ -699,6 +786,11 @@ class Repository:
             thumbnail_rel_path=str(row["thumbnail_rel_path"]),
             analysis=json.loads(row["analysis_json"]),
             editorial=editorial,
+            annotations=(
+                json.loads(row["annotations_json"] or "[]")
+                if "annotations_json" in row.keys()
+                else []
+            ),
             created_at=str(row["created_at"]),
             updated_at=str(row["updated_at"]),
         )

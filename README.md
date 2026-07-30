@@ -48,9 +48,15 @@ copied into the database or included in a library export.
 - Filter frames by category, HEX code, or perceptually similar colors.
 - Browse selected frames in a dedicated Gallery Workspace.
 - Resize thumbnails independently in Capture and Gallery workspaces.
-- Download stored frames in small, medium, or original resolution.
+- Add non-destructive annotations with freehand pen, line, arrow, rectangle,
+  ellipse, text, color, stroke-width, undo, and redo tools.
+- Display saved annotations automatically on thumbnails throughout the app.
+- Reopen, edit, replace, or completely remove annotations without modifying
+  the original stored frame.
+- Download either the original frame or the version with annotations.
 - Export and restore complete ShotLab libraries without the source video.
-- Export frame collections as one-, two-, or three-column PDF reference sheets.
+- Export frame collections as one-, two-, or three-column PDF reference sheets,
+  using either original frames or versions with annotations.
 - Use English or Persian with bundled Inter and Vazirmatn fonts.
 - Switch between dark and light themes.
 - Work entirely offline after the initial development setup.
@@ -81,6 +87,8 @@ The application is divided into focused modules:
 - `analysis.py` creates thumbnails and calculates dominant color palettes.
 - `backup.py` exports, validates, restores, and recovers ShotLab libraries.
 - `pdf_export.py` generates printable visual-reference sheets.
+- `ui/annotation_board.py` provides the non-destructive drawing, editing, and
+  rendering tools used by the Annotation Board.
 - `ui/` contains the PySide6 interface, themes, dialogs, and custom widgets.
 - `i18n.py` contains the English and Persian interface text and taxonomy.
 
@@ -100,7 +108,8 @@ projects/
     ├── project.json
     ├── captures/
     │   ├── full/
-    │   └── thumbnails/
+    │   ├── thumbnails/
+    │   └── annotated/
     └── .drafts/
 ```
 
@@ -109,6 +118,11 @@ SQLite acts as the main searchable index, while each library also keeps a
 not stored in SQLite, copied into the project, or included in `.shotlab`
 exports. Only its local location is remembered in the application settings so
 it can be reopened later if the file still exists.
+
+Annotations are stored as editable vector data with normalized coordinates.
+ShotLab creates derived annotated previews and thumbnails while keeping the
+original stored frame unchanged. Annotation data and previews are included when
+a library is exported and restored.
 
 ## 🛠️ Running from Source
 
@@ -234,9 +248,13 @@ Website: [storyeco.xyz](https://storyeco.xyz)
 - فیلتر براساس دسته‌بندی‌ها، کد <bdi dir="ltr">HEX</bdi> یا رنگ‌های نزدیک از نظر ادراکی
 - مرور فریم‌ها در فضای کاری اختصاصی <bdi dir="ltr">Gallery</bdi>
 - تغییر مستقل اندازهٔ <bdi dir="ltr">Thumbnail</bdi>ها در <bdi dir="ltr">Capture</bdi> و <bdi dir="ltr">Gallery</bdi>
-- دانلود فریم‌ها با اندازهٔ کوچک، متوسط یا رزولوشن اصلی
+- حاشیه‌نویسی غیرمخرب روی فریم‌ها با قلم آزاد، خط، فلش، مستطیل، بیضی و متن
+- انتخاب رنگ و ضخامت خط و استفاده از واگرد و ازنو در میز حاشیه‌نویسی
+- نمایش خودکار حاشیه‌نویسی‌های ذخیره‌شده روی تصاویر بندانگشتی در تمام فضاهای کاری
+- ویرایش، جایگزینی یا حذف کامل حاشیه‌نویسی بدون تغییر فریم اصلی
+- دانلود فریم اصلی یا نسخهٔ دارای حاشیه‌نویسی
 - خروجی و بازیابی کامل کتابخانه‌های <bdi dir="ltr">ShotLab</bdi> بدون ویدئوی منبع
-- ساخت <bdi dir="ltr">PDF</bdi> رفرنس با چیدمان یک، دو یا سه ستون
+- ساخت <bdi dir="ltr">PDF</bdi> رفرنس با چیدمان یک، دو یا سه ستون و امکان انتخاب فریم‌های اصلی یا حاشیه‌نویسی‌شده
 - رابط فارسی و انگلیسی با فونت‌های داخلی <bdi dir="ltr">Inter</bdi> و <bdi dir="ltr">Vazirmatn</bdi>
 - پوستهٔ روشن و تیره
 - کارکرد کاملاً آفلاین پس از آماده‌سازی اولیهٔ محیط توسعه
@@ -282,6 +300,7 @@ Website: [storyeco.xyz](https://storyeco.xyz)
     <tr><td dir="ltr" align="left"><code>analysis.py</code></td><td align="right">تولید تصاویر بندانگشتی و محاسبهٔ پالت رنگی غالب</td></tr>
     <tr><td dir="ltr" align="left"><code>backup.py</code></td><td align="right">خروجی، اعتبارسنجی، بازیابی و ترمیم کتابخانه‌ها</td></tr>
     <tr><td dir="ltr" align="left"><code>pdf_export.py</code></td><td align="right">ساخت شیت‌های مرجع پی‌دی‌اف</td></tr>
+    <tr><td dir="ltr" align="left"><code>ui/annotation_board.py</code></td><td align="right">ابزارهای ترسیم، ویرایش و رندر غیرمخرب حاشیه‌نویسی‌ها</td></tr>
     <tr><td dir="ltr" align="left"><code>ui/</code></td><td align="right">رابط کاربری، پوسته‌ها، پنجره‌ها و اجزای اختصاصی</td></tr>
     <tr><td dir="ltr" align="left"><code>i18n.py</code></td><td align="right">متن‌های فارسی و انگلیسی و دسته‌بندی‌های نرم‌افزار</td></tr>
   </tbody>
@@ -303,7 +322,8 @@ projects/
     ├── project.json
     ├── captures/
     │   ├── full/
-    │   └── thumbnails/
+    │   ├── thumbnails/
+    │   └── annotated/
     └── .drafts/
 ```
 
@@ -312,6 +332,11 @@ projects/
 می‌کند. ویدئوی اصلی در <bdi dir="ltr">SQLite</bdi> ذخیره نمی‌شود، داخل پروژه کپی نمی‌شود و در
 خروجی‌های <bdi dir="ltr"><code>.shotlab</code></bdi> قرار نمی‌گیرد. فقط آدرس لوکال آن در تنظیمات برنامه به
 خاطر سپرده می‌شود تا در صورت موجودبودن فایل، در مراجعهٔ بعدی دوباره باز شود.
+
+حاشیه‌نویسی‌ها به‌صورت داده‌های برداری قابل ویرایش و با مختصات نسبی ذخیره
+می‌شوند. شات‌لب برای نمایش آن‌ها نسخه‌های مشتق‌شده و تصاویر بندانگشتی جداگانه
+می‌سازد و فریم اصلی را بدون تغییر نگه می‌دارد. اطلاعات و پیش‌نمایش‌های
+حاشیه‌نویسی هنگام خروجی‌گرفتن و بازیابی کتابخانه نیز حفظ می‌شوند.
 
 ## 🛠️ اجرای سورس
 

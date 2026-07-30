@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 APP_NAME = "ShotLab"
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 
 def default_data_root() -> Path:

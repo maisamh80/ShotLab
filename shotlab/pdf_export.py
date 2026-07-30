@@ -218,6 +218,8 @@ def _draw_capture_card(
     repository: Repository,
     language: str,
     fps: float,
+    include_annotations: bool,
+    single_column: bool,
 ) -> None:
     title = str(
         capture.editorial.get("title")
@@ -273,23 +275,50 @@ def _draw_capture_card(
     )
 
     image_top = rect.top() + line_height
-    image_height = min(
-        rect.width() * 9.0 / 16.0,
-        rect.height() * 0.48,
-    )
-    image_rect = QRectF(
-        rect.left(),
-        image_top,
-        rect.width(),
-        image_height,
-    )
-    painter.fillRect(image_rect, IMAGE_FALLBACK)
-    image_path = repository.resolve_project_file(
-        capture.project_id,
-        capture.image_rel_path,
+    image_path = (
+        repository.display_image_path(capture)
+        if include_annotations
+        else repository.resolve_project_file(
+            capture.project_id,
+            capture.image_rel_path,
+        )
     )
     source = QImage(str(image_path))
-    if not source.isNull():
+    if single_column and not source.isNull():
+        # A single-column export gives each frame its own page. Size the
+        # image area from the frame's real aspect ratio so the picture spans
+        # the available width without artificial black letterboxing.
+        metadata_height = 12 + 22 + 5 + 28 + 18 + 10 * 27
+        max_image_height = max(
+            1.0,
+            rect.bottom() - image_top - metadata_height,
+        )
+        scale = min(
+            rect.width() / max(source.width(), 1),
+            max_image_height / max(source.height(), 1),
+        )
+        image_width = source.width() * scale
+        image_height = source.height() * scale
+        image_rect = QRectF(
+            rect.center().x() - image_width / 2,
+            image_top,
+            image_width,
+            image_height,
+        )
+        painter.drawImage(image_rect, source)
+    else:
+        image_height = min(
+            rect.width() * 9.0 / 16.0,
+            rect.height() * 0.48,
+        )
+        image_rect = QRectF(
+            rect.left(),
+            image_top,
+            rect.width(),
+            image_height,
+        )
+        painter.fillRect(image_rect, IMAGE_FALLBACK)
+    if not single_column and not source.isNull():
         scaled = source.scaled(
             round(image_rect.width()),
             round(image_rect.height()),
@@ -400,6 +429,7 @@ def export_captures_pdf(
     columns: int,
     assets_root: Path,
     fps: float = 24.0,
+    include_annotations: bool = False,
 ) -> int:
     capture_list = list(captures)
     if not capture_list:
@@ -429,12 +459,16 @@ def export_captures_pdf(
     logo_height = logo_width * logo.height() / max(logo.width(), 1)
     content_top = page_rect.top() + logo_height + 38
     available_height = max(1.0, page_rect.bottom() - content_top)
-    rows_per_page = max(
-        1,
-        int(
-            (available_height + gap)
-            // (PDF_CARD_MIN_HEIGHT + gap)
-        ),
+    rows_per_page = (
+        1
+        if columns == 1
+        else max(
+            1,
+            int(
+                (available_height + gap)
+                // (PDF_CARD_MIN_HEIGHT + gap)
+            ),
+        )
     )
     per_page = columns * rows_per_page
     page_count = math.ceil(len(capture_list) / per_page)
@@ -482,6 +516,8 @@ def export_captures_pdf(
                     repository,
                     language,
                     max(float(fps), 1.0),
+                    include_annotations,
+                    columns == 1,
                 )
     finally:
         painter.end()

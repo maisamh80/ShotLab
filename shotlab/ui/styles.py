@@ -15,6 +15,47 @@ QMainWindow, QDialog {
 QDialog#ConfirmationDialog, QDialog#DeveloperCreditDialog {
     background: transparent;
 }
+QDialog#AnnotationBoardDialog {
+    background: transparent;
+}
+QFrame#AnnotationBoard {
+    background: #101415;
+    border: 1px solid #4d4430;
+    border-radius: 16px;
+}
+QLabel#AnnotationTitle {
+    color: #e1bb69;
+    font-size: 17pt;
+    font-weight: 700;
+}
+QPushButton#AnnotationClose {
+    min-width: 36px;
+    max-width: 36px;
+    min-height: 34px;
+    max-height: 34px;
+    padding: 0;
+    color: #aeb7b5;
+    background: transparent;
+    border: 1px solid #303838;
+    border-radius: 17px;
+    font-size: 18pt;
+}
+QPushButton#AnnotationTool {
+    min-width: 38px;
+    min-height: 36px;
+    padding: 2px 9px;
+    color: #d8b365;
+    background: #151a1b;
+    border: 1px solid #303838;
+    border-radius: 7px;
+    font-size: 14pt;
+}
+QPushButton#AnnotationTool:hover,
+QPushButton#AnnotationTool:checked {
+    color: #f1c979;
+    background: #302817;
+    border-color: #e7c87f;
+}
 QFrame#DeveloperCreditPanel {
     background: #111617;
     border: 1px solid #4d4430;
@@ -1899,6 +1940,33 @@ QDialog#LibraryNameDialog, QDialog#ValidationDialog,
 QDialog#ColorPickerDialog, QDialog#PdfExportDialog {
     background: transparent;
     border: none;
+}
+QDialog#AnnotationBoardDialog {
+    background: transparent;
+    border: none;
+}
+QFrame#AnnotationBoard {
+    background: #FFFFFF;
+    border: 1px solid #DDB75F;
+    border-radius: 10px;
+}
+QLabel#AnnotationTitle {
+    color: #303332;
+    font-size: 17pt;
+    font-weight: 500;
+}
+QPushButton#AnnotationTool {
+    min-width: 38px;
+    min-height: 36px;
+    padding: 2px 9px;
+    background: #F4F6F5;
+    border: 1px solid #C3CBC7;
+    border-radius: 7px;
+}
+QPushButton#AnnotationTool:hover,
+QPushButton#AnnotationTool:checked {
+    background: #F6EACD;
+    border-color: #DDB75F;
 }
 QFrame#WarningDialog, QFrame#DeveloperCreditPanel {
     background: #FFFFFF;

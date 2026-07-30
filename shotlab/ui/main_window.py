@@ -12,6 +12,7 @@ from PySide6.QtCore import (
     QRunnable,
     QSettings,
     QSize,
+    QPoint,
     Qt,
     QTimer,
     QThreadPool,
@@ -56,6 +57,7 @@ from PySide6.QtWidgets import (
     QPushButton,
     QRadioButton,
     QScrollArea,
+    QSizePolicy,
     QSlider,
     QSplitter,
     QStackedWidget,
@@ -75,6 +77,7 @@ from ..pdf_export import export_captures_pdf
 from ..repository import Repository
 from ..session import CaptureSession
 from .styles import stylesheet
+from .annotation_board import AnnotationBoardDialog
 from .widgets import (
     CaptureFilterPanel,
     ColorSwatch,
@@ -517,6 +520,25 @@ class PdfExportDialog(QDialog):
                 radio.setChecked(True)
         root.addLayout(columns_row)
 
+        version_label = QLabel(text(language, "pdf_frame_version"))
+        version_label.setObjectName("FormLabel")
+        root.addWidget(version_label)
+        frame_version_row = QHBoxLayout()
+        frame_version_row.setSpacing(18)
+        self.frame_version_group = QButtonGroup(self)
+        original_radio = QRadioButton(
+            text(language, "pdf_original_frames")
+        )
+        annotated_radio = QRadioButton(
+            text(language, "pdf_annotated_frames")
+        )
+        self.frame_version_group.addButton(original_radio, 0)
+        self.frame_version_group.addButton(annotated_radio, 1)
+        original_radio.setChecked(True)
+        frame_version_row.addWidget(original_radio)
+        frame_version_row.addWidget(annotated_radio)
+        root.addLayout(frame_version_row)
+
         for scope, key in (
             ("all", "pdf_all_libraries"),
             ("active", "pdf_last_active_library"),
@@ -553,6 +575,10 @@ class PdfExportDialog(QDialog):
     @property
     def columns(self) -> int:
         return max(1, self.columns_group.checkedId())
+
+    @property
+    def include_annotations(self) -> bool:
+        return self.frame_version_group.checkedId() == 1
 
 
 class MainWindow(QMainWindow):
@@ -689,7 +715,22 @@ class MainWindow(QMainWindow):
 
         self.sidebar_navigation_label = QLabel()
         self.sidebar_navigation_label.setObjectName("SidebarSection")
-        self.sidebar_layout.addWidget(self.sidebar_navigation_label)
+        self.sidebar_navigation_label.setLayoutDirection(
+            Qt.LayoutDirection.LeftToRight
+        )
+        self.sidebar_navigation_label.setAlignment(
+            Qt.AlignmentFlag.AlignLeft
+            | Qt.AlignmentFlag.AlignVCenter
+        )
+        self.sidebar_navigation_label.setSizePolicy(
+            QSizePolicy.Policy.Maximum,
+            QSizePolicy.Policy.Preferred,
+        )
+        self.sidebar_layout.addWidget(
+            self.sidebar_navigation_label,
+            0,
+            Qt.AlignmentFlag.AlignLeft,
+        )
         self.nav_projects = self._nav_button(self.show_projects)
         self.nav_capture = self._nav_button(self.show_capture_workspace)
         self.nav_gallery = self._nav_button(self.show_current_gallery)
@@ -704,7 +745,22 @@ class MainWindow(QMainWindow):
         self.sidebar_layout.addSpacing(34)
         self.sidebar_data_label = QLabel("DATA")
         self.sidebar_data_label.setObjectName("SidebarSection")
-        self.sidebar_layout.addWidget(self.sidebar_data_label)
+        self.sidebar_data_label.setLayoutDirection(
+            Qt.LayoutDirection.LeftToRight
+        )
+        self.sidebar_data_label.setAlignment(
+            Qt.AlignmentFlag.AlignLeft
+            | Qt.AlignmentFlag.AlignVCenter
+        )
+        self.sidebar_data_label.setSizePolicy(
+            QSizePolicy.Policy.Maximum,
+            QSizePolicy.Policy.Preferred,
+        )
+        self.sidebar_layout.addWidget(
+            self.sidebar_data_label,
+            0,
+            Qt.AlignmentFlag.AlignLeft,
+        )
         self.pdf_export_button = QPushButton()
         self.pdf_export_button.setObjectName("SidebarAction")
         self.pdf_export_button.clicked.connect(self.export_pdf)
@@ -1757,14 +1813,58 @@ class MainWindow(QMainWindow):
             )
         )
         self.gallery_download_button = QPushButton()
-        self.gallery_download_button.setObjectName("Primary")
+        self.gallery_download_button.setObjectName("ProjectAction")
+        self.gallery_download_button.setIcon(
+            QIcon(
+                str(
+                    Path(__file__).resolve().parents[2]
+                    / "assets"
+                    / "final_ui"
+                    / "download-frame.svg"
+                )
+            )
+        )
+        self.gallery_download_button.setIconSize(QSize(36, 30))
+        self.gallery_download_button.setFixedSize(48, 40)
         self.gallery_download_button.clicked.connect(self.download_gallery_frame)
         self.gallery_edit_button = QPushButton()
-        self.gallery_edit_button.setObjectName("Primary")
+        self.gallery_edit_button.setObjectName("ProjectAction")
+        self.gallery_edit_button.setIcon(
+            QIcon(
+                str(
+                    Path(__file__).resolve().parents[2]
+                    / "assets"
+                    / "final_ui"
+                    / "edit-information.svg"
+                )
+            )
+        )
+        self.gallery_edit_button.setIconSize(QSize(37, 30))
+        self.gallery_edit_button.setFixedSize(48, 40)
         self.gallery_edit_button.clicked.connect(self.edit_gallery_frame)
+        self.gallery_annotation_button = QPushButton()
+        self.gallery_annotation_button.setObjectName("ProjectDelete")
+        self.gallery_annotation_button.setIcon(
+            QIcon(
+                str(
+                    Path(__file__).resolve().parents[2]
+                    / "assets"
+                    / "final_ui"
+                    / "annotation.svg"
+                )
+            )
+        )
+        self.gallery_annotation_button.setIconSize(QSize(34, 30))
+        self.gallery_annotation_button.setFixedSize(48, 40)
+        self.gallery_annotation_button.setEnabled(False)
+        self.gallery_annotation_button.clicked.connect(
+            self.open_annotation_board
+        )
         actions.addWidget(self.gallery_delete_button)
-        actions.addWidget(self.gallery_download_button, 1)
-        actions.addWidget(self.gallery_edit_button, 1)
+        actions.addWidget(self.gallery_download_button)
+        actions.addWidget(self.gallery_edit_button)
+        actions.addWidget(self.gallery_annotation_button)
+        actions.addStretch(1)
 
         detail_layout.addWidget(detail_heading)
         detail_layout.addWidget(self.gallery_detail_image)
@@ -1957,6 +2057,19 @@ class MainWindow(QMainWindow):
             label.setText(text(self.language, key))
         self.sidebar_navigation_label.setText(text(self.language, "navigation"))
         self.sidebar_data_label.setText(text(self.language, "data_repository"))
+        for label in (
+            self.sidebar_navigation_label,
+            self.sidebar_data_label,
+        ):
+            label.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+            label.setAlignment(
+                Qt.AlignmentFlag.AlignLeft
+                | Qt.AlignmentFlag.AlignVCenter
+            )
+            self.sidebar_layout.setAlignment(
+                label,
+                Qt.AlignmentFlag.AlignLeft,
+            )
         self.storage_caption.setText(text(self.language, "storing_size"))
         self.storage_actions["actual"].setText(
             f"{text(self.language, 'actual_size')}   AS"
@@ -2016,12 +2129,15 @@ class MainWindow(QMainWindow):
         self.gallery_detail_title.setText(
             text(self.language, "shot_information")
         )
-        self.gallery_download_button.setText(text(self.language, "download_frame"))
+        self.gallery_download_button.setText("")
         self.gallery_download_button.setToolTip(
             text(self.language, "download_frame")
         )
-        self.gallery_edit_button.setText(text(self.language, "edit_frame"))
+        self.gallery_edit_button.setText("")
         self.gallery_edit_button.setToolTip(text(self.language, "edit_frame"))
+        self.gallery_annotation_button.setToolTip(
+            text(self.language, "go_to_annotation_board")
+        )
         self.gallery_delete_button.setToolTip(
             text(self.language, "delete_frame")
         )
@@ -2253,10 +2369,7 @@ class MainWindow(QMainWindow):
             title = capture.editorial.get("title") or f"Capture {capture.capture_number}"
             item = QListWidgetItem(f"{title}  ·  {project_name}")
             item.setToolTip(f"{title} · {project_name}")
-            image = self.repository.resolve_project_file(
-                capture.project_id,
-                capture.thumbnail_rel_path,
-            )
+            image = self.repository.display_thumbnail_path(capture)
             item.setIcon(
                 self._thumbnail_icon(
                     image,
@@ -2297,10 +2410,7 @@ class MainWindow(QMainWindow):
             timecode = self._capture_time_label(capture, fps)
             item = QListWidgetItem(f"{title}  ·  {timecode}")
             item.setToolTip(f"{title} · {timecode}")
-            image = self.repository.resolve_project_file(
-                capture.project_id,
-                capture.thumbnail_rel_path,
-            )
+            image = self.repository.display_thumbnail_path(capture)
             item.setIcon(
                 self._thumbnail_icon(
                     image,
@@ -2420,6 +2530,7 @@ class MainWindow(QMainWindow):
         self.gallery_delete_button.setVisible(True)
         self.gallery_download_button.setEnabled(True)
         self.gallery_edit_button.setEnabled(True)
+        self.gallery_annotation_button.setEnabled(True)
         title = capture.editorial.get("title") or f"Capture {capture.capture_number}"
         self.gallery_detail_title.setText(
             text(self.language, "shot_information")
@@ -2429,10 +2540,7 @@ class MainWindow(QMainWindow):
         self.gallery_detail_time.setText(
             self._capture_time_label(capture, fps)
         )
-        image_path = self.repository.resolve_project_file(
-            capture.project_id,
-            capture.image_rel_path,
-        )
+        image_path = self.repository.display_image_path(capture)
         pixmap = QPixmap(str(image_path))
         self.gallery_detail_image.setPixmap(
             pixmap.scaled(
@@ -2506,6 +2614,7 @@ class MainWindow(QMainWindow):
         self.gallery_delete_button.setVisible(False)
         self.gallery_download_button.setEnabled(False)
         self.gallery_edit_button.setEnabled(False)
+        self.gallery_annotation_button.setEnabled(False)
         self._set_gallery_detail_rows([])
         for swatch in self.gallery_palette_swatches:
             swatch.set_color("")
@@ -2514,16 +2623,67 @@ class MainWindow(QMainWindow):
         capture = self.current_gallery_capture
         if not capture:
             return
-        source = self.repository.resolve_project_file(
-            capture.project_id,
-            capture.image_rel_path,
+        menu = QMenu(self.gallery_download_button)
+        self._gallery_download_menu = menu
+        original_action = menu.addAction(
+            text(self.language, "download_original_frame")
+        )
+        annotated_action = menu.addAction(
+            text(self.language, "download_annotated_frame")
+        )
+        annotated_action.setEnabled(
+            bool(
+                capture.annotations
+                and self.repository.annotated_image_path(capture).is_file()
+            )
+        )
+        original_action.triggered.connect(
+            lambda _checked=False: self._download_gallery_frame_variant(False)
+        )
+        annotated_action.triggered.connect(
+            lambda _checked=False: self._download_gallery_frame_variant(True)
+        )
+        menu.adjustSize()
+        anchor = self.gallery_download_button.mapToGlobal(
+            self.gallery_download_button.rect().topLeft()
+        )
+        menu.popup(
+            anchor
+            - QPoint(
+                0,
+                menu.sizeHint().height() + 6,
+            )
+        )
+
+    def _download_gallery_frame_variant(
+        self,
+        include_annotations: bool,
+    ) -> None:
+        capture = self.current_gallery_capture
+        if not capture:
+            return
+        source = (
+            self.repository.display_image_path(capture)
+            if include_annotations
+            else self.repository.resolve_project_file(
+                capture.project_id,
+                capture.image_rel_path,
+            )
         )
         default_name = Path(capture.image_rel_path).name
+        if include_annotations:
+            default_name = (
+                f"{Path(default_name).stem}_annotated.png"
+            )
         destination, _ = QFileDialog.getSaveFileName(
             self,
             text(self.language, "download_frame"),
             default_name,
-            "JPEG Image (*.jpg)",
+            (
+                "PNG Image (*.png)"
+                if include_annotations
+                else "JPEG Image (*.jpg)"
+            ),
         )
         if not destination:
             return
@@ -2538,6 +2698,40 @@ class MainWindow(QMainWindow):
         capture_id = self.current_gallery_capture.id
         self.show_capture_workspace()
         self.open_capture_by_id(capture_id)
+
+    def open_annotation_board(self) -> None:
+        capture = self.current_gallery_capture
+        if not capture:
+            return
+        source = self.repository.resolve_project_file(
+            capture.project_id,
+            capture.image_rel_path,
+        )
+        dialog = AnnotationBoardDialog(
+            source,
+            capture.annotations,
+            self.language,
+            self,
+        )
+        if dialog.exec() != QDialog.DialogCode.Accepted:
+            return
+        try:
+            full_path = self.repository.annotated_image_path(capture)
+            thumb_path = self.repository.annotated_thumbnail_path(capture)
+            dialog.canvas.render_annotated(full_path, thumb_path)
+            capture = self.repository.update_capture_annotations(
+                capture.id,
+                dialog.annotations,
+            )
+        except Exception as exc:
+            self.show_error(str(exc))
+            return
+        self.current_gallery_capture = capture
+        self.refresh_captures()
+        self.refresh_projects()
+        self.refresh_gallery()
+        self.show_gallery_capture(capture.id)
+        self.show_status(text(self.language, "annotation_saved"), 3500)
 
     def delete_capture_frame(self, capture_id: str | None) -> None:
         if not capture_id:
@@ -2647,6 +2841,7 @@ class MainWindow(QMainWindow):
                 dialog.columns,
                 Path(__file__).resolve().parents[2] / "assets",
                 fps,
+                dialog.include_annotations,
             )
         except Exception as exc:
             self.show_error(str(exc))
@@ -3248,10 +3443,7 @@ class MainWindow(QMainWindow):
             label = f"{title}  ·  {timecode}"
             item = QListWidgetItem(label)
             item.setToolTip(f"{title} · {timecode}")
-            thumb = self.repository.resolve_project_file(
-                capture.project_id,
-                capture.thumbnail_rel_path,
-            )
+            thumb = self.repository.display_thumbnail_path(capture)
             item.setIcon(
                 self._thumbnail_icon(
                     thumb,

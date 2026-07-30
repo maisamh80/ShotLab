@@ -188,6 +188,33 @@ class RepositoryTests(unittest.TestCase):
         )
         self.assertEqual(updated.editorial["notes"], "Corrected by user")
 
+        annotations = [
+            {
+                "type": "arrow",
+                "points": [[0.2, 0.3], [0.7, 0.6]],
+                "color": "#D8B365",
+                "width": 5,
+            }
+        ]
+        annotated = self.repository.update_capture_annotations(
+            capture.id,
+            annotations,
+        )
+        self.assertEqual(annotated.annotations, annotations)
+        annotated_full = self.repository.annotated_image_path(annotated)
+        annotated_thumb = self.repository.annotated_thumbnail_path(annotated)
+        annotated_full.parent.mkdir(parents=True, exist_ok=True)
+        annotated_full.write_bytes(b"annotated-preview")
+        annotated_thumb.write_bytes(b"annotated-thumbnail")
+        self.assertEqual(
+            self.repository.display_image_path(annotated),
+            annotated_full,
+        )
+        self.assertEqual(
+            self.repository.display_thumbnail_path(annotated),
+            annotated_thumb,
+        )
+
         project_after = self.repository.get_project(project.id)
         self.assertIsNotNone(project_after)
         self.assertEqual(project_after.capture_count, 1)
@@ -199,6 +226,10 @@ class RepositoryTests(unittest.TestCase):
         )
         self.assertEqual(len(payload["captures"]), 1)
         self.assertEqual(payload["captures"][0]["editorial"]["notes"], "Corrected by user")
+        self.assertEqual(
+            payload["captures"][0]["annotations"],
+            annotations,
+        )
         serialized = json.dumps(payload, ensure_ascii=False)
         self.assertNotIn(str(video), serialized)
         self.assertNotIn(video.name, serialized)
@@ -236,12 +267,7 @@ class RepositoryTests(unittest.TestCase):
         )
         self.assertEqual(
             self.repository.project_thumbnails(project.id),
-            [
-                self.repository.resolve_project_file(
-                    project.id,
-                    capture.thumbnail_rel_path,
-                )
-            ],
+            [annotated_thumb],
         )
         self.assertEqual(self.repository.search_captures("does-not-exist"), [])
 
