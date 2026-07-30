@@ -17,8 +17,8 @@
 </p>
 
 <p align="center">
-  <em>Made with cinema, code, curiosity, and a suspicious number of tiny interface refinements.</em><br>
-  <span dir="rtl"><em>ساخته‌شده با سینما، کد، کنجکاوی و تعداد مشکوکی اصلاحات ریز رابط کاربری.</em></span>
+  <em>Made with cinema, code, curiosity, and a suspicious amount of effort to bring it to life.</em><br>
+  <span dir="rtl"><em>ساخته‌شده با سینما، کد، کنجکاوی و میزان مشکوکی تلاش برای پیاده سازی</em></span>
 </p>
 
 <a id="english"></a>
