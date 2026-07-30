@@ -53,6 +53,7 @@ copied into the database or included in a library export.
 - Display saved annotations automatically on thumbnails throughout the app.
 - Reopen, edit, replace, or completely remove annotations without modifying
   the original stored frame.
+- Store captured frames in small, medium, or original resolution.
 - Download either the original frame or the version with annotations.
 - Export and restore complete ShotLab libraries without the source video.
 - Export frame collections as one-, two-, or three-column PDF reference sheets,
@@ -252,6 +253,7 @@ Website: [storyeco.xyz](https://storyeco.xyz)
 - انتخاب رنگ و ضخامت خط و استفاده از واگرد و ازنو در میز حاشیه‌نویسی
 - نمایش خودکار حاشیه‌نویسی‌های ذخیره‌شده روی تصاویر بندانگشتی در تمام فضاهای کاری
 - ویرایش، جایگزینی یا حذف کامل حاشیه‌نویسی بدون تغییر فریم اصلی
+- ذخیرهٔ فریم‌ها با اندازهٔ کوچک، متوسط یا رزولوشن اصلی
 - دانلود فریم اصلی یا نسخهٔ دارای حاشیه‌نویسی
 - خروجی و بازیابی کامل کتابخانه‌های <bdi dir="ltr">ShotLab</bdi> بدون ویدئوی منبع
 - ساخت <bdi dir="ltr">PDF</bdi> رفرنس با چیدمان یک، دو یا سه ستون و امکان انتخاب فریم‌های اصلی یا حاشیه‌نویسی‌شده
