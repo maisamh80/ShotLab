@@ -586,11 +586,20 @@ class MainWindow(QMainWindow):
     GALLERY_THUMBNAIL_WIDTHS = (130, 160, 190, 230, 280)
     SEARCH_THUMBNAIL_WIDTHS = (130, 160, 190, 230, 280)
 
-    def __init__(self, repository: Repository, session: CaptureSession) -> None:
+    def __init__(
+        self,
+        repository: Repository,
+        session: CaptureSession,
+        settings: QSettings | None = None,
+    ) -> None:
         super().__init__()
         self.repository = repository
         self.session = session
-        self.settings = QSettings("StoryEco", "ShotLab")
+        self.settings = (
+            settings
+            if settings is not None
+            else QSettings("StoryEco", "ShotLab")
+        )
         self.language = str(self.settings.value("language", "fa"))
         if self.language not in {"fa", "en"}:
             self.language = "fa"

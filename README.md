@@ -144,28 +144,31 @@ vendor/
 
 Prepare the development environment once:
 
-```bat
-setup_windows.bat
+```powershell
+.\setup_windows.bat
 ```
 
 After setup, launch ShotLab without reinstalling dependencies:
 
-```bat
-run_windows.bat
+```powershell
+.\run_windows.bat
 ```
 
 To prepare an optional offline cache of the Python dependencies:
 
-```bat
-cache_windows_dependencies.bat
+```powershell
+.\cache_windows_dependencies.bat
 ```
+
+PowerShell does not execute commands from the current directory implicitly,
+so the `.\` prefix is required. The same commands also work in Command Prompt.
 
 ## 📦 Building the Portable and Installer Releases
 
 Install the 64-bit version of Inno Setup 7, then run:
 
-```bat
-publish_windows.bat
+```powershell
+.\publish_windows.bat
 ```
 
 The script runs the quality-assurance suite, builds the application with
@@ -181,8 +184,8 @@ release/
 
 To build only the direct PyInstaller application folder:
 
-```bat
-build_windows.bat
+```powershell
+.\build_windows.bat
 ```
 
 Its executable is created at:
@@ -359,28 +362,32 @@ vendor/
 
 محیط توسعه را فقط یک بار آماده کنید:
 
-```bat
-setup_windows.bat
+```powershell
+.\setup_windows.bat
 ```
 
 پس از آن <bdi dir="ltr">ShotLab</bdi> را بدون نصب دوبارهٔ <bdi dir="ltr">Dependency</bdi>ها اجرا کنید:
 
-```bat
-run_windows.bat
+```powershell
+.\run_windows.bat
 ```
 
 برای ساخت <bdi dir="ltr">Cache</bdi> آفلاین اختیاری از <bdi dir="ltr">Dependency</bdi>های <bdi dir="ltr">Python</bdi>:
 
-```bat
-cache_windows_dependencies.bat
+```powershell
+.\cache_windows_dependencies.bat
 ```
+
+پاورشل فرمان‌های پوشهٔ جاری را به‌صورت ضمنی اجرا نمی‌کند؛ بنابراین پیشوند
+<bdi dir="ltr"><code>.\</code></bdi> الزامی است. همین فرمان‌ها در
+<bdi dir="ltr">Command Prompt</bdi> نیز قابل اجرا هستند.
 
 ## 📦 ساخت نسخهٔ پرتابل و نصبی
 
 ابتدا نسخهٔ ۶۴ بیتی <bdi dir="ltr">Inno Setup 7</bdi> را نصب و سپس اجرا کنید:
 
-```bat
-publish_windows.bat
+```powershell
+.\publish_windows.bat
 ```
 
 این اسکریپت آزمون‌های کنترل کیفیت را اجرا می‌کند، نرم‌افزار را با <bdi dir="ltr">PyInstaller</bdi>
@@ -396,8 +403,8 @@ release/
 
 برای ساختن فقط پوشهٔ مستقیم برنامه با <bdi dir="ltr">PyInstaller</bdi>:
 
-```bat
-build_windows.bat
+```powershell
+.\build_windows.bat
 ```
 
 فایل اجرایی در این مسیر ساخته می‌شود:

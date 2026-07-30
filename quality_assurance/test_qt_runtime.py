@@ -43,15 +43,23 @@ class QtRuntimeSmokeTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="shotlab-ui-test-") as folder:
             settings_root = Path(folder) / "settings"
             settings_root.mkdir()
-            QSettings.setDefaultFormat(QSettings.Format.IniFormat)
-            QSettings.setPath(
+            test_settings = QSettings(
+                str(settings_root / "shotlab-test.ini"),
                 QSettings.Format.IniFormat,
-                QSettings.Scope.UserScope,
-                str(settings_root),
             )
+            test_settings.setFallbacksEnabled(False)
+            test_settings.clear()
+            test_settings.setValue("language", "en")
+            test_settings.setValue("theme", "dark")
+            test_settings.setValue("sidebar_collapsed", False)
+            test_settings.sync()
             repository = Repository(Path(folder) / "data")
             session = CaptureSession(repository)
-            window = MainWindow(repository, session)
+            window = MainWindow(
+                repository,
+                session,
+                settings=test_settings,
+            )
             try:
                 window.show()
                 self.application.processEvents()
