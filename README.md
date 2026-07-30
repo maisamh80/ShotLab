@@ -16,6 +16,11 @@
   <a href="#english">English</a> · <a href="#فارسی">فارسی</a>
 </p>
 
+<p align="center">
+  <em>Made with cinema, code, curiosity, and a suspicious number of tiny interface refinements.</em><br>
+  <span dir="rtl"><em>ساخته‌شده با سینما، کد، کنجکاوی و تعداد مشکوکی اصلاحات ریز رابط کاربری.</em></span>
+</p>
+
 <a id="english"></a>
 
 ## 🎬 About ShotLab
