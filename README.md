@@ -47,8 +47,9 @@ copied into the database or included in a library export.
 - Import still images manually in addition to capturing video frames.
 - Capture the visible frame from a standard YouTube video with the optional
   ShotLab Capture Bridge Chrome extension.
-- Extract a five-color palette with real image-coverage percentages.
-- Copy HEX values directly from palette colors.
+- Extract a five-color palette displayed as five equal-width swatches.
+- Click any palette color to copy its HEX code or replace it by picking a
+  color directly from the frame.
 - Add and edit shot size, camera angle, location, lens type, time of day,
   lighting style, key quality, mood, tags, title, and notes.
 - Search across all manually entered information.
@@ -286,8 +287,9 @@ Website: [storyeco.xyz](https://storyeco.xyz)
 - ورود دستی تصاویر ثابت در کنار کپچر از ویدئو
 - کپچر فریم قابل‌مشاهدهٔ ویدیوی یوتیوب با افزونهٔ اختیاری
   <bdi dir="ltr">ShotLab Capture Bridge</bdi> برای <bdi dir="ltr">Chrome</bdi>
-- استخراج پالت پنج‌رنگ همراه درصد واقعی پوشش هر رنگ در تصویر
-- کپی مستقیم کد <bdi dir="ltr">HEX</bdi> رنگ‌های پالت
+- استخراج پالت پنج‌رنگ با پنج بلوک هم‌عرض و بدون نمایش درصد پوشش
+- کلیک روی هر رنگ برای کپی کد <bdi dir="ltr">HEX</bdi> یا جایگزینی آن با
+  انتخاب مستقیم رنگ از خود فریم
 - ثبت و ویرایش اندازهٔ نما، زاویهٔ دوربین، محیط، نوع لنز، زمان، سبک
   نورپردازی، کیفیت نور <bdi dir="ltr">Key</bdi>، مود، تگ‌ها، عنوان و یادداشت
 - جست‌وجو در تمام اطلاعاتی که کاربر وارد کرده است

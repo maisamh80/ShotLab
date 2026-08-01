@@ -24,6 +24,7 @@ from PySide6.QtCore import (
 from PySide6.QtGui import (
     QAction,
     QColor,
+    QCursor,
     QFont,
     QIcon,
     QImage,
@@ -85,6 +86,7 @@ from .annotation_board import AnnotationBoardDialog
 from .widgets import (
     CaptureFilterPanel,
     ColorSwatch,
+    FrameColorPickerLabel,
     HoverHoldLabel,
     ProjectCard,
     TimelineSlider,
@@ -648,6 +650,7 @@ class MainWindow(QMainWindow):
         self.current_draft: CaptureDraft | None = None
         self.current_capture: Capture | None = None
         self.current_gallery_capture: Capture | None = None
+        self._active_palette_pick: tuple[str, int] | None = None
         self._capture_worker: CaptureWorker | None = None
         self._displayed_frame = QImage()
         self._displayed_frame_time_ms = 0
@@ -1045,6 +1048,7 @@ class MainWindow(QMainWindow):
 
     @Slot(int)
     def _workspace_changed(self, _index: int) -> None:
+        self._cancel_palette_color_pick()
         if self.stack.currentWidget() is not self.capture_page:
             # Preserve the current position, but immediately stop video and
             # audio whenever the user leaves Capture Workspace.
@@ -1592,10 +1596,16 @@ class MainWindow(QMainWindow):
         inspector_heading.addWidget(self.inspector_time)
         inspector_layout.addLayout(inspector_heading)
 
-        self.preview_label = QLabel()
+        self.preview_label = FrameColorPickerLabel()
         self.preview_label.setObjectName("FramePreview")
         self.preview_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.preview_label.setMinimumHeight(210)
+        self.preview_label.color_picked.connect(
+            lambda color: self._palette_color_picked("capture", color)
+        )
+        self.preview_label.pick_cancelled.connect(
+            self._cancel_palette_color_pick
+        )
         inspector_layout.addWidget(self.preview_label)
 
         self.palette_frame = QFrame()
@@ -1607,11 +1617,20 @@ class MainWindow(QMainWindow):
         self.palette_layout.setContentsMargins(0, 0, 0, 0)
         self.palette_layout.setSpacing(0)
         self.palette_swatches: list[ColorSwatch] = []
-        for _ in range(5):
+        for index in range(5):
             swatch = ColorSwatch()
             swatch.setMinimumHeight(24)
-            swatch.color_clicked.connect(self.copy_color_to_clipboard)
-            self.palette_layout.addWidget(swatch)
+            swatch.color_clicked.connect(
+                lambda color, index=index, swatch=swatch: (
+                    self._show_palette_menu(
+                        "capture",
+                        index,
+                        swatch,
+                        color,
+                    )
+                )
+            )
+            self.palette_layout.addWidget(swatch, 1)
             self.palette_swatches.append(swatch)
         inspector_layout.addWidget(self.palette_frame)
 
@@ -1803,10 +1822,16 @@ class MainWindow(QMainWindow):
         detail_heading_layout.addWidget(self.gallery_detail_title, 1)
         detail_heading_layout.addWidget(self.gallery_detail_time)
 
-        self.gallery_detail_image = QLabel()
+        self.gallery_detail_image = FrameColorPickerLabel()
         self.gallery_detail_image.setObjectName("FramePreview")
         self.gallery_detail_image.setMinimumHeight(220)
         self.gallery_detail_image.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.gallery_detail_image.color_picked.connect(
+            lambda color: self._palette_color_picked("gallery", color)
+        )
+        self.gallery_detail_image.pick_cancelled.connect(
+            self._cancel_palette_color_pick
+        )
         self.gallery_detail_palette = QFrame()
         self.gallery_detail_palette.setObjectName("DetailPalette")
         self.gallery_palette_layout = QHBoxLayout(
@@ -1815,11 +1840,20 @@ class MainWindow(QMainWindow):
         self.gallery_palette_layout.setContentsMargins(0, 0, 0, 0)
         self.gallery_palette_layout.setSpacing(0)
         self.gallery_palette_swatches: list[ColorSwatch] = []
-        for _ in range(5):
+        for index in range(5):
             swatch = ColorSwatch()
             swatch.setMinimumHeight(28)
-            swatch.color_clicked.connect(self.copy_color_to_clipboard)
-            self.gallery_palette_layout.addWidget(swatch)
+            swatch.color_clicked.connect(
+                lambda color, index=index, swatch=swatch: (
+                    self._show_palette_menu(
+                        "gallery",
+                        index,
+                        swatch,
+                        color,
+                    )
+                )
+            )
+            self.gallery_palette_layout.addWidget(swatch, 1)
             self.gallery_palette_swatches.append(swatch)
 
         self.gallery_detail_scroll = QScrollArea()
@@ -1920,7 +1954,7 @@ class MainWindow(QMainWindow):
             (QKeySequence(Qt.Key.Key_Right), lambda: self.step_frame(1)),
             ("J", lambda: self.seek_seconds(-5)),
             ("L", lambda: self.seek_seconds(5)),
-            ("Escape", self.discard_current_draft),
+            ("Escape", self._handle_escape),
         ):
             shortcut = QShortcut(
                 sequence if isinstance(sequence, QKeySequence) else QKeySequence(sequence),
@@ -1928,6 +1962,12 @@ class MainWindow(QMainWindow):
             )
             shortcut.activated.connect(callback)
             self.shortcuts.append(shortcut)
+
+    def _handle_escape(self) -> None:
+        if self._active_palette_pick is not None:
+            self._cancel_palette_color_pick()
+            return
+        self.discard_current_draft()
 
     def _toggle_language(self) -> None:
         self.language = "en" if self.language == "fa" else "fa"
@@ -2551,6 +2591,7 @@ class MainWindow(QMainWindow):
         self.gallery_detail_rows_layout.addStretch()
 
     def show_gallery_capture(self, capture_id: str) -> None:
+        self._cancel_palette_color_pick()
         capture = self.repository.get_capture(capture_id)
         if not capture:
             return
@@ -2635,6 +2676,7 @@ class MainWindow(QMainWindow):
     def _clear_gallery_detail(self) -> None:
         if not hasattr(self, "gallery_detail_image"):
             return
+        self._cancel_palette_color_pick()
         self.gallery_detail_image.clear()
         self.gallery_detail_title.setText(
             text(self.language, "shot_information")
@@ -3615,6 +3657,7 @@ class MainWindow(QMainWindow):
 
     @Slot(str)
     def open_capture_by_id(self, capture_id: str) -> None:
+        self._cancel_palette_color_pick()
         capture = self.repository.get_capture(capture_id)
         if not capture:
             return
@@ -3647,6 +3690,7 @@ class MainWindow(QMainWindow):
     def _set_inspector_enabled(self, enabled: bool) -> None:
         self.inspector_frame.setEnabled(enabled)
         if not enabled:
+            self._cancel_palette_color_pick()
             self.capture_delete_button.setVisible(False)
             self.preview_label.clear()
             self.preview_label.setText(text(self.language, "select_frame"))
@@ -3685,47 +3729,12 @@ class MainWindow(QMainWindow):
         analysis: dict,
     ) -> None:
         colors = analysis.get("dominant_colors", []) if analysis else []
-        percentages = (
-            analysis.get("color_percentages", [])
-            if analysis
-            else []
-        )
         valid_color_count = min(len(colors), len(swatches))
-        has_percentages = (
-            valid_color_count > 0
-            and len(percentages) >= valid_color_count
-            and sum(
-                max(0.0, float(value))
-                for value in percentages[:valid_color_count]
-            ) > 0
-        )
         for index, swatch in enumerate(swatches):
             color = colors[index] if index < valid_color_count else ""
-            percentage = (
-                max(0.0, float(percentages[index]))
-                if has_percentages and index < valid_color_count
-                else None
-            )
-            swatch.set_color(color, percentage)
-
-            if not colors:
-                swatch.setVisible(True)
-                layout.setStretch(index, 1)
-                continue
-
-            visible = bool(color) and (
-                percentage is None or percentage > 0
-            )
-            swatch.setVisible(visible)
-            if not visible:
-                layout.setStretch(index, 0)
-            elif percentage is None:
-                layout.setStretch(index, 1)
-            else:
-                layout.setStretch(
-                    index,
-                    max(1, round(percentage * 10)),
-                )
+            swatch.set_color(color)
+            swatch.setVisible(True)
+            layout.setStretch(index, 1)
 
     def _ensure_palette_percentages(self, capture: Capture) -> Capture:
         colors = capture.analysis.get("dominant_colors", [])
@@ -3744,6 +3753,124 @@ class MainWindow(QMainWindow):
             )
         except Exception:
             return capture
+
+    def _show_palette_menu(
+        self,
+        context: str,
+        index: int,
+        swatch: ColorSwatch,
+        color: str,
+    ) -> None:
+        if context == "capture":
+            available = bool(self.current_draft or self.current_capture)
+        else:
+            available = bool(self.current_gallery_capture)
+        if not available:
+            return
+        menu = QMenu(swatch)
+        copy_action = menu.addAction(text(self.language, "copy_color_code"))
+        copy_action.setEnabled(bool(color))
+        pick_action = menu.addAction(
+            text(self.language, "pick_color_from_frame")
+        )
+        selected = menu.exec(QCursor.pos())
+        if selected is copy_action:
+            self.copy_color_to_clipboard(color)
+        elif selected is pick_action:
+            self._begin_palette_color_pick(context, index)
+
+    def _begin_palette_color_pick(self, context: str, index: int) -> None:
+        self._cancel_palette_color_pick()
+        preview = (
+            self.preview_label
+            if context == "capture"
+            else self.gallery_detail_image
+        )
+        if not preview.begin_color_pick():
+            return
+        self._active_palette_pick = (context, index)
+        self.show_status(
+            text(self.language, "pick_color_instruction"),
+            5000,
+        )
+
+    def _cancel_palette_color_pick(self) -> None:
+        self._active_palette_pick = None
+        if hasattr(self, "preview_label"):
+            self.preview_label.cancel_color_pick()
+        if hasattr(self, "gallery_detail_image"):
+            self.gallery_detail_image.cancel_color_pick()
+
+    def _palette_color_picked(self, context: str, color: str) -> None:
+        target = self._active_palette_pick
+        if target is None or target[0] != context:
+            return
+        index = target[1]
+        self._cancel_palette_color_pick()
+        self._replace_palette_color(context, index, color)
+
+    def _replace_palette_color(
+        self,
+        context: str,
+        index: int,
+        color: str,
+    ) -> None:
+        clean_color = QColor(color).name(QColor.NameFormat.HexRgb).upper()
+        if context == "capture" and self.current_draft:
+            analysis = dict(self.current_draft.analysis)
+            colors = list(analysis.get("dominant_colors", []))
+            while len(colors) <= index:
+                colors.append(colors[-1] if colors else "#000000")
+            colors[index] = clean_color
+            analysis["dominant_colors"] = colors
+            self.current_draft.analysis = analysis
+            self._show_analysis(analysis)
+        else:
+            capture = (
+                self.current_capture
+                if context == "capture"
+                else self.current_gallery_capture
+            )
+            if capture is None:
+                return
+            analysis = dict(capture.analysis)
+            colors = list(analysis.get("dominant_colors", []))
+            while len(colors) <= index:
+                colors.append(colors[-1] if colors else "#000000")
+            colors[index] = clean_color
+            analysis["dominant_colors"] = colors
+            try:
+                updated = self.repository.update_capture_analysis(
+                    capture.id,
+                    analysis,
+                )
+            except Exception as exc:
+                self.show_error(str(exc))
+                return
+            if self.current_capture and self.current_capture.id == updated.id:
+                self.current_capture = updated
+            if (
+                self.current_gallery_capture
+                and self.current_gallery_capture.id == updated.id
+            ):
+                self.current_gallery_capture = updated
+            if context == "capture":
+                self._show_analysis(updated.analysis)
+            else:
+                self._apply_palette_analysis(
+                    self.gallery_palette_swatches,
+                    self.gallery_palette_layout,
+                    updated.analysis,
+                )
+            self.refresh_projects()
+        self.show_status(
+            text(
+                self.language,
+                "palette_color_updated",
+                color=clean_color,
+            ),
+            2600,
+        )
 
     def copy_color_to_clipboard(self, color: str) -> None:
         QApplication.clipboard().setText(color)

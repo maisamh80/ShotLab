@@ -364,26 +364,15 @@ def _draw_capture_card(
         ),
     )
     colors = list(capture.analysis.get("dominant_colors", []))[:5]
-    percentages = list(capture.analysis.get("color_percentages", []))[:5]
     if not colors:
         colors = ["#D9D9D9"]
-    valid_percentages = (
-        len(percentages) >= len(colors)
-        and sum(max(0.0, float(value)) for value in percentages[: len(colors)])
-        > 0
-    )
-    weights = (
-        [max(0.0, float(value)) for value in percentages[: len(colors)]]
-        if valid_percentages
-        else [1.0] * len(colors)
-    )
-    total = max(sum(weights), 1.0)
     cursor = palette_rect.left()
-    for index, (color, weight) in enumerate(zip(colors, weights)):
+    equal_width = palette_rect.width() / max(len(colors), 1)
+    for index, color in enumerate(colors):
         width = (
             palette_rect.right() - cursor
             if index == len(colors) - 1
-            else palette_rect.width() * weight / total
+            else equal_width
         )
         painter.fillRect(
             QRectF(cursor, palette_rect.top(), width, palette_rect.height()),

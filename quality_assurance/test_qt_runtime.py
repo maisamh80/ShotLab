@@ -9,8 +9,8 @@ from pathlib import Path
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 try:
-    from PySide6.QtCore import QSettings, QSize, Qt
-    from PySide6.QtGui import QFont, QFontDatabase
+    from PySide6.QtCore import QPoint, QSettings, QSize, Qt
+    from PySide6.QtGui import QColor, QFont, QFontDatabase, QPixmap
     from PySide6.QtWidgets import QApplication, QBoxLayout, QFrame, QLabel
 
     from main import load_bundled_fonts
@@ -18,6 +18,7 @@ try:
     from shotlab.repository import Repository
     from shotlab.session import CaptureSession
     from shotlab.ui.main_window import MainWindow
+    from shotlab.ui.widgets import FrameColorPickerLabel
 except ModuleNotFoundError:
     QT_AVAILABLE = False
 else:
@@ -38,6 +39,16 @@ class QtRuntimeSmokeTests(unittest.TestCase):
 
     def test_supplied_vazirmatn_family_is_registered(self) -> None:
         self.assertIn("Vazirmatn", QFontDatabase.families())
+
+    def test_frame_color_picker_samples_the_displayed_image(self) -> None:
+        preview = FrameColorPickerLabel()
+        preview.resize(100, 100)
+        pixmap = QPixmap(40, 20)
+        pixmap.fill(QColor("#12ABEF"))
+        preview.setPixmap(pixmap)
+        self.assertTrue(preview.begin_color_pick())
+        self.assertEqual(preview._color_at(QPoint(50, 50)), "#12ABEF")
+        preview.cancel_color_pick()
 
     def test_main_window_constructs_with_final_ui(self) -> None:
         with tempfile.TemporaryDirectory(prefix="shotlab-ui-test-") as folder:
@@ -100,6 +111,15 @@ class QtRuntimeSmokeTests(unittest.TestCase):
                 self.assertEqual(
                     window.gallery_list.viewport().cursor().shape(),
                     Qt.CursorShape.PointingHandCursor,
+                )
+                self.assertTrue(
+                    all(not swatch.text() for swatch in window.palette_swatches)
+                )
+                self.assertTrue(
+                    all(
+                        window.palette_layout.stretch(index) == 1
+                        for index in range(5)
+                    )
                 )
 
                 window.language = "fa"

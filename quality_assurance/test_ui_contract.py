@@ -169,6 +169,32 @@ class FinalUiContractTests(unittest.TestCase):
             4,
         )
 
+    def test_editable_equal_width_palette_contracts_are_present(self) -> None:
+        main_source = (
+            ROOT / "shotlab" / "ui" / "main_window.py"
+        ).read_text(encoding="utf-8")
+        widgets_source = (
+            ROOT / "shotlab" / "ui" / "widgets.py"
+        ).read_text(encoding="utf-8")
+        pdf_source = (
+            ROOT / "shotlab" / "pdf_export.py"
+        ).read_text(encoding="utf-8")
+        self.assertIn("class FrameColorPickerLabel", widgets_source)
+        self.assertNotIn("percentage_text", widgets_source)
+        self.assertIn('text(self.language, "copy_color_code")', main_source)
+        self.assertIn(
+            'text(self.language, "pick_color_from_frame")',
+            main_source,
+        )
+        self.assertIn("layout.setStretch(index, 1)", main_source)
+        self.assertIn("equal_width = palette_rect.width()", pdf_source)
+        self.assertNotIn("color_percentages", pdf_source)
+        self.assertEqual(STRINGS["en"]["copy_color_code"], "Copy Color Code")
+        self.assertEqual(
+            STRINGS["en"]["pick_color_from_frame"],
+            "Pick Color from Frame",
+        )
+
     def test_persian_shell_and_pdf_header_keep_reserved_geometry(
         self,
     ) -> None:

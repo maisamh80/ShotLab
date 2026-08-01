@@ -2,6 +2,11 @@
 
 ## Unreleased — YouTube Capture Bridge
 
+- Present frame palettes as five equal-width swatches without coverage labels.
+- Add a two-action palette menu for copying a HEX code or replacing a swatch
+  by sampling a color directly from the displayed frame with an eyedropper
+  cursor; persist edits in drafts and saved captures.
+- Render equal-width palette blocks in PDF exports as well.
 - Update the Chrome extension to 0.1.3 and include the host permission required
   by `captureVisibleTab` when capture is triggered from the in-page YouTube
   button; keep script injection limited to YouTube and transmission fixed to

@@ -388,10 +388,23 @@ class RepositoryTests(unittest.TestCase):
         )
         self.assertIsNone(capture.source_pts)
         self.assertEqual(capture.editorial["title"], "Manual reference")
+        edited_analysis = dict(capture.analysis)
+        edited_colors = list(edited_analysis["dominant_colors"])
+        edited_colors[2] = "#12ABEF"
+        edited_analysis["dominant_colors"] = edited_colors
+        capture = self.repository.update_capture_analysis(
+            capture.id,
+            edited_analysis,
+        )
+        self.assertEqual(capture.analysis["dominant_colors"][2], "#12ABEF")
         reopened = Repository(self.repository.data_root)
         reopened_capture = reopened.get_capture(capture.id)
         self.assertIsNotNone(reopened_capture)
         self.assertIsNone(reopened_capture.source_pts)
+        self.assertEqual(
+            reopened_capture.analysis["dominant_colors"][2],
+            "#12ABEF",
+        )
         self.assertNotIn(
             source.name.encode("utf-8"),
             self.repository.database_path.read_bytes(),

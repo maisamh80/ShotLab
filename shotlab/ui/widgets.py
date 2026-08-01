@@ -43,7 +43,6 @@ class ColorSwatch(QLabel):
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self._color = ""
-        self._percentage: float | None = None
         self.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setMinimumHeight(28)
         self.setMinimumWidth(0)
@@ -80,37 +79,20 @@ class ColorSwatch(QLabel):
         color = QColor(value)
         valid = bool(value) and color.isValid()
         self._color = color.name().upper() if valid else ""
-        self._percentage = (
-            max(0.0, min(float(percentage), 100.0))
-            if valid and percentage is not None
-            else None
-        )
         background = self._color if valid else "#15191A"
-        foreground = (
-            "#111514"
-            if valid and color.lightness() > 150
-            else "#F7F5EE"
-        )
-        percentage_text = ""
-        if self._percentage is not None:
-            value_text = f"{self._percentage:.1f}".rstrip("0").rstrip(".")
-            percentage_text = f"{value_text}%"
-        self.setText(percentage_text)
+        # Coverage remains available in analysis data for compatibility, but
+        # the editable palette is intentionally presented as equal swatches.
+        self.setText("")
         self.setToolTip("")
-        self.setCursor(
-            Qt.CursorShape.PointingHandCursor
-            if valid
-            else Qt.CursorShape.ArrowCursor
-        )
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setStyleSheet(
-            f"background:{background}; color:{foreground}; border:none;"
-            "font-size:9pt; font-weight:650;"
+            f"background:{background}; border:none;"
         )
         if not valid:
             self._hover_label.hide()
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
-        if event.button() == Qt.MouseButton.LeftButton and self._color:
+        if event.button() == Qt.MouseButton.LeftButton:
             self.color_clicked.emit(self._color)
             event.accept()
             return
@@ -147,6 +129,82 @@ class ColorSwatch(QLabel):
         self._hover_label.move(QCursor.pos() + QPoint(14, 18))
         self._hover_label.show()
         self._hover_label.raise_()
+
+
+class FrameColorPickerLabel(QLabel):
+    """A frame preview that can sample a color from its displayed pixmap."""
+
+    color_picked = Signal(str)
+    pick_cancelled = Signal()
+
+    def __init__(self, parent=None) -> None:
+        super().__init__(parent)
+        self._color_pick_active = False
+
+    def begin_color_pick(self) -> bool:
+        pixmap = self.pixmap()
+        if pixmap is None or pixmap.isNull():
+            return False
+        self._color_pick_active = True
+        cursor_path = (
+            Path(__file__).resolve().parents[2]
+            / "assets"
+            / "final_ui"
+            / "color-picker.svg"
+        )
+        cursor_pixmap = QIcon(str(cursor_path)).pixmap(QSize(28, 28))
+        if cursor_pixmap.isNull():
+            self.setCursor(Qt.CursorShape.CrossCursor)
+        else:
+            self.setCursor(QCursor(cursor_pixmap, 5, 23))
+        return True
+
+    def cancel_color_pick(self) -> None:
+        self._color_pick_active = False
+        self.unsetCursor()
+
+    def mousePressEvent(self, event: QMouseEvent) -> None:
+        if not self._color_pick_active:
+            super().mousePressEvent(event)
+            return
+        if event.button() == Qt.MouseButton.RightButton:
+            self.cancel_color_pick()
+            self.pick_cancelled.emit()
+            event.accept()
+            return
+        if event.button() == Qt.MouseButton.LeftButton:
+            color = self._color_at(event.position().toPoint())
+            if color:
+                self.cancel_color_pick()
+                self.color_picked.emit(color)
+            event.accept()
+            return
+        super().mousePressEvent(event)
+
+    def _color_at(self, position: QPoint) -> str:
+        pixmap = self.pixmap()
+        if pixmap is None or pixmap.isNull():
+            return ""
+        ratio = max(float(pixmap.devicePixelRatio()), 1.0)
+        display_width = pixmap.width() / ratio
+        display_height = pixmap.height() / ratio
+        left = (self.width() - display_width) / 2.0
+        top = (self.height() - display_height) / 2.0
+        if not (
+            left <= position.x() < left + display_width
+            and top <= position.y() < top + display_height
+        ):
+            return ""
+        image = pixmap.toImage()
+        x = min(
+            image.width() - 1,
+            max(0, int((position.x() - left) * image.width() / display_width)),
+        )
+        y = min(
+            image.height() - 1,
+            max(0, int((position.y() - top) * image.height() / display_height)),
+        )
+        return image.pixelColor(x, y).name(QColor.NameFormat.HexRgb).upper()
 
 
 class HoverHoldLabel(QLabel):
