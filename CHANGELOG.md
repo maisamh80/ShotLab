@@ -7,6 +7,9 @@
 - Support fit, actual-size view, wheel zoom, drag-to-pan, previous/next
   navigation, and original/annotated switching without changing existing
   thumbnail click or double-click behavior.
+- Let Fit use nearly the entire review surface even when the stored frame is
+  smaller than the display; flatten the header and footer into the shared
+  background and reduce the previous/next controls.
 - Treat six-digit HEX searches with or without a leading `#` identically and
   include perceptually nearby matches in both forms.
 - Always include exact HEX matches from any of a frame's five palette slots;

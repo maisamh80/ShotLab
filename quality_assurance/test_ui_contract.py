@@ -292,6 +292,19 @@ class FinalUiContractTests(unittest.TestCase):
         self.assertIn("QDialog#FrameReviewDialog", styles_source)
         self.assertIn("FRAME_REVIEW_DARK", styles_source)
         self.assertIn("FRAME_REVIEW_LIGHT", styles_source)
+        self.assertIn(
+            "QFrame#FrameReviewBar {\n"
+            "    background: transparent;\n"
+            "    border: none;",
+            styles_source,
+        )
+        self.assertIn("min-width: 42px;", styles_source)
+        self.assertIn("self.setMinimumSize(320, 240)", review_source)
+        self.assertNotIn(
+            "min(\n                1.0,\n"
+            "                self.width()",
+            review_source,
+        )
         self.assertEqual(
             STRINGS["fa"]["open_frame_review"],
             "نمایش بزرگ فریم",

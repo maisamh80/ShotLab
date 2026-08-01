@@ -13,6 +13,7 @@ from PySide6.QtGui import (
     QWheelEvent,
 )
 from PySide6.QtWidgets import (
+    QApplication,
     QDialog,
     QFrame,
     QHBoxLayout,
@@ -41,7 +42,7 @@ class FrameReviewCanvas(QWidget):
         self._dragging = False
         self._drag_origin = QPointF()
         self._pan_origin = QPointF()
-        self.setMinimumSize(640, 420)
+        self.setMinimumSize(320, 240)
         self.setMouseTracking(True)
 
     def sizeHint(self) -> QSize:
@@ -57,7 +58,6 @@ class FrameReviewCanvas(QWidget):
         return max(
             0.0001,
             min(
-                1.0,
                 self.width() / max(self.image.width(), 1),
                 self.height() / max(self.image.height(), 1),
             ),
@@ -80,7 +80,17 @@ class FrameReviewCanvas(QWidget):
         )
 
     def _maximum_zoom(self) -> float:
-        return min(48.0, max(8.0, 4.0 / self._fit_scale()))
+        return min(48.0, max(1.0, 8.0 / self._fit_scale()))
+
+    def _minimum_zoom(self) -> float:
+        return min(1.0, 1.0 / self._fit_scale())
+
+    def _can_pan(self) -> bool:
+        rect = self._image_rect()
+        return (
+            rect.width() > self.width() + 1.0
+            or rect.height() > self.height() + 1.0
+        )
 
     def _clamp_pan(self) -> None:
         rect = self._image_rect()
@@ -102,14 +112,17 @@ class FrameReviewCanvas(QWidget):
         self.update()
 
     def show_actual_size(self) -> None:
-        self.zoom = min(self._maximum_zoom(), 1.0 / self._fit_scale())
+        self.zoom = min(
+            self._maximum_zoom(),
+            max(self._minimum_zoom(), 1.0 / self._fit_scale()),
+        )
         self.pan = QPointF()
         self._update_pan_cursor()
         self._emit_zoom()
         self.update()
 
     def _update_pan_cursor(self) -> None:
-        if self.zoom > 1.001:
+        if self._can_pan():
             self.setCursor(Qt.CursorShape.OpenHandCursor)
         else:
             self.unsetCursor()
@@ -121,7 +134,10 @@ class FrameReviewCanvas(QWidget):
         old_scale = self._scale()
         image_x = (position.x() - old_rect.left()) / max(old_scale, 0.0001)
         image_y = (position.y() - old_rect.top()) / max(old_scale, 0.0001)
-        self.zoom = min(self._maximum_zoom(), max(1.0, value))
+        self.zoom = min(
+            self._maximum_zoom(),
+            max(self._minimum_zoom(), value),
+        )
         new_scale = self._scale()
         new_width = self.image.width() * new_scale
         new_height = self.image.height() * new_scale
@@ -138,7 +154,16 @@ class FrameReviewCanvas(QWidget):
 
     def paintEvent(self, _event) -> None:
         painter = QPainter(self)
-        painter.fillRect(self.rect(), QColor("#050708"))
+        application = QApplication.instance()
+        theme = (
+            str(application.property("shotlab_theme") or "dark")
+            if application is not None
+            else "dark"
+        )
+        painter.fillRect(
+            self.rect(),
+            QColor("#EDF0ED" if theme == "light" else "#050708"),
+        )
         if self.image.isNull():
             painter.setPen(QColor("#89918F"))
             painter.drawText(
@@ -156,7 +181,7 @@ class FrameReviewCanvas(QWidget):
         event.accept()
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
-        if event.button() == Qt.MouseButton.LeftButton and self.zoom > 1.001:
+        if event.button() == Qt.MouseButton.LeftButton and self._can_pan():
             self._dragging = True
             self._drag_origin = event.position()
             self._pan_origin = QPointF(self.pan)
@@ -241,14 +266,14 @@ class FrameReviewDialog(QDialog):
         panel.setObjectName("FrameReviewPanel")
         root.addWidget(panel)
         panel_layout = QVBoxLayout(panel)
-        panel_layout.setContentsMargins(16, 12, 16, 12)
-        panel_layout.setSpacing(10)
+        panel_layout.setContentsMargins(10, 6, 10, 6)
+        panel_layout.setSpacing(2)
 
         self.header = QFrame()
         self.header.setObjectName("FrameReviewBar")
         header_layout = QHBoxLayout(self.header)
-        header_layout.setContentsMargins(14, 8, 10, 8)
-        header_layout.setSpacing(12)
+        header_layout.setContentsMargins(4, 2, 2, 2)
+        header_layout.setSpacing(10)
         self.title_label = QLabel()
         self.title_label.setObjectName("FrameReviewTitle")
         self.meta_label = QLabel()
@@ -273,12 +298,12 @@ class FrameReviewDialog(QDialog):
 
         image_row = QHBoxLayout()
         image_row.setContentsMargins(0, 0, 0, 0)
-        image_row.setSpacing(10)
+        image_row.setSpacing(5)
         assets = Path(__file__).resolve().parents[2] / "assets" / "final_ui"
         self.previous_button = QPushButton()
         self.previous_button.setObjectName("FrameReviewNav")
         self.previous_button.setIcon(QIcon(str(assets / "previous-frame.svg")))
-        self.previous_button.setIconSize(QSize(32, 32))
+        self.previous_button.setIconSize(QSize(26, 26))
         self.previous_button.setToolTip(text(language, "previous_frame"))
         self.previous_button.setCursor(Qt.CursorShape.PointingHandCursor)
         self.previous_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
@@ -287,20 +312,28 @@ class FrameReviewDialog(QDialog):
         self.next_button = QPushButton()
         self.next_button.setObjectName("FrameReviewNav")
         self.next_button.setIcon(QIcon(str(assets / "next-frame.svg")))
-        self.next_button.setIconSize(QSize(32, 32))
+        self.next_button.setIconSize(QSize(26, 26))
         self.next_button.setToolTip(text(language, "next_frame"))
         self.next_button.setCursor(Qt.CursorShape.PointingHandCursor)
         self.next_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.next_button.clicked.connect(self.next_frame)
-        image_row.addWidget(self.previous_button)
+        image_row.addWidget(
+            self.previous_button,
+            0,
+            Qt.AlignmentFlag.AlignVCenter,
+        )
         image_row.addWidget(self.canvas, 1)
-        image_row.addWidget(self.next_button)
+        image_row.addWidget(
+            self.next_button,
+            0,
+            Qt.AlignmentFlag.AlignVCenter,
+        )
         panel_layout.addLayout(image_row, 1)
 
         self.footer = QFrame()
         self.footer.setObjectName("FrameReviewBar")
         footer_layout = QHBoxLayout(self.footer)
-        footer_layout.setContentsMargins(14, 7, 14, 7)
+        footer_layout.setContentsMargins(4, 3, 4, 2)
         self.zoom_label = QLabel("100%")
         self.zoom_label.setObjectName("FrameReviewZoom")
         self.canvas.zoom_changed.connect(

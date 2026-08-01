@@ -2035,13 +2035,12 @@ QDialog#FrameReviewDialog {
     background: #050708;
 }
 QFrame#FrameReviewPanel {
-    background: #080B0C;
+    background: #050708;
     border: none;
 }
 QFrame#FrameReviewBar {
-    background: #101516;
-    border: 1px solid #27302E;
-    border-radius: 9px;
+    background: transparent;
+    border: none;
 }
 QLabel#FrameReviewTitle {
     color: #F4F2EB;
@@ -2058,25 +2057,24 @@ QLabel#FrameReviewHint {
     font-size: 9.5pt;
 }
 QPushButton#FrameReviewAction {
-    min-height: 34px;
-    padding: 0 14px;
+    min-height: 30px;
+    padding: 0 8px;
     color: #E8C46F;
-    background: #171D1D;
-    border: 1px solid #695A38;
-    border-radius: 7px;
+    background: transparent;
+    border: none;
 }
 QPushButton#FrameReviewAction:hover {
-    background: #282315;
-    border-color: #D8B365;
+    color: #F4F2EB;
+    background: transparent;
 }
 QPushButton#FrameReviewClose {
-    min-width: 36px;
-    max-width: 36px;
-    min-height: 34px;
-    max-height: 34px;
+    min-width: 34px;
+    max-width: 34px;
+    min-height: 32px;
+    max-height: 32px;
     padding: 0;
     color: #D8B365;
-    background: transparent;
+    background: #101516;
     border: 1px solid #39413F;
     border-radius: 7px;
     font-size: 18pt;
@@ -2087,10 +2085,10 @@ QPushButton#FrameReviewClose:hover {
     border-color: #D8B365;
 }
 QPushButton#FrameReviewNav {
-    min-width: 50px;
-    max-width: 50px;
-    min-height: 72px;
-    max-height: 72px;
+    min-width: 42px;
+    max-width: 42px;
+    min-height: 56px;
+    max-height: 56px;
     padding: 0;
     background: #101516;
     border: 1px solid #27302E;
@@ -2115,9 +2113,8 @@ QFrame#FrameReviewPanel {
     border: none;
 }
 QFrame#FrameReviewBar {
-    background: #FFFFFF;
-    border: 1px solid #C8CECB;
-    border-radius: 9px;
+    background: transparent;
+    border: none;
 }
 QLabel#FrameReviewTitle {
     color: #303332;
@@ -2134,25 +2131,24 @@ QLabel#FrameReviewHint {
     font-size: 9.5pt;
 }
 QPushButton#FrameReviewAction {
-    min-height: 34px;
-    padding: 0 14px;
+    min-height: 30px;
+    padding: 0 8px;
     color: #6F5523;
-    background: #FFF8E8;
-    border: 1px solid #D8B365;
-    border-radius: 7px;
+    background: transparent;
+    border: none;
 }
 QPushButton#FrameReviewAction:hover {
-    background: #F6E8C6;
-    border-color: #A98233;
+    color: #303332;
+    background: transparent;
 }
 QPushButton#FrameReviewClose {
-    min-width: 36px;
-    max-width: 36px;
-    min-height: 34px;
-    max-height: 34px;
+    min-width: 34px;
+    max-width: 34px;
+    min-height: 32px;
+    max-height: 32px;
     padding: 0;
     color: #A98233;
-    background: transparent;
+    background: #FFFFFF;
     border: 1px solid #C8CECB;
     border-radius: 7px;
     font-size: 18pt;
@@ -2163,10 +2159,10 @@ QPushButton#FrameReviewClose:hover {
     border-color: #A98233;
 }
 QPushButton#FrameReviewNav {
-    min-width: 50px;
-    max-width: 50px;
-    min-height: 72px;
-    max-height: 72px;
+    min-width: 42px;
+    max-width: 42px;
+    min-height: 56px;
+    max-height: 56px;
     padding: 0;
     background: #FFFFFF;
     border: 1px solid #C8CECB;
