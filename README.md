@@ -58,6 +58,9 @@ copied into the database or included in a library export.
   matches based on the two dominant colors.
 - Browse selected frames in a dedicated Gallery Workspace.
 - Resize thumbnails independently in Capture and Gallery workspaces.
+- Open any frame at full size from Capture, Gallery, or Library search results
+  in a frameless review viewer with fit, 100% view, wheel zoom, drag-to-pan,
+  previous/next navigation, and original/annotated switching.
 - Add non-destructive annotations with freehand pen, line, arrow, rectangle,
   ellipse, text, color, stroke-width, undo, and redo tools.
 - Display saved annotations automatically on thumbnails throughout the app.
@@ -104,6 +107,8 @@ The application is divided into focused modules:
 - `browser_extension/` contains the optional Manifest V3 Chrome extension.
 - `ui/annotation_board.py` provides the non-destructive drawing, editing, and
   rendering tools used by the Annotation Board.
+- `ui/frame_review.py` provides full-size frame review, zoom, pan, navigation,
+  and original/annotated switching.
 - `ui/` contains the PySide6 interface, themes, dialogs, and custom widgets.
 - `i18n.py` contains the English and Persian interface text and taxonomy.
 
@@ -299,6 +304,10 @@ Website: [storyeco.xyz](https://storyeco.xyz)
   علامت `#`؛ تطبیق دقیق در هر پنج بلوک و شباهت ادراکی براساس دو رنگ غالب
 - مرور فریم‌ها در فضای کاری اختصاصی <bdi dir="ltr">Gallery</bdi>
 - تغییر مستقل اندازهٔ <bdi dir="ltr">Thumbnail</bdi>ها در <bdi dir="ltr">Capture</bdi> و <bdi dir="ltr">Gallery</bdi>
+- بازکردن هر فریم در نمایشگر بزرگ و بدون قاب از فضای کپچر، گالری یا نتایج
+  جست‌وجوی کتابخانه؛ همراه جاگذاری در صفحه، نمایش اندازهٔ واقعی، بزرگ‌نمایی
+  با چرخ موس، جابه‌جایی با درگ، پیمایش قبلی و بعدی و انتخاب نسخهٔ اصلی یا
+  حاشیه‌نویسی‌شده
 - حاشیه‌نویسی غیرمخرب روی فریم‌ها با قلم آزاد، خط، فلش، مستطیل، بیضی و متن
 - انتخاب رنگ و ضخامت خط و استفاده از واگرد و ازنو در میز حاشیه‌نویسی
 - نمایش خودکار حاشیه‌نویسی‌های ذخیره‌شده روی تصاویر بندانگشتی در تمام فضاهای کاری
@@ -356,6 +365,7 @@ Website: [storyeco.xyz](https://storyeco.xyz)
     <tr><td dir="ltr" align="left"><code>browser_bridge.py</code></td><td align="right">دریافت و اعتبارسنجی فریم‌های مرورگر روی رابط لوپ‌بک محلی</td></tr>
     <tr><td dir="ltr" align="left"><code>browser_extension/</code></td><td align="right">افزونهٔ اختیاری کروم با استاندارد منیفست نسخهٔ سه</td></tr>
     <tr><td dir="ltr" align="left"><code>ui/annotation_board.py</code></td><td align="right">ابزارهای ترسیم، ویرایش و رندر غیرمخرب حاشیه‌نویسی‌ها</td></tr>
+    <tr><td dir="ltr" align="left"><code>ui/frame_review.py</code></td><td align="right">نمایش بزرگ فریم، بزرگ‌نمایی، جابه‌جایی، پیمایش و سوییچ نسخهٔ اصلی و حاشیه‌نویسی‌شده</td></tr>
     <tr><td dir="ltr" align="left"><code>ui/</code></td><td align="right">رابط کاربری، پوسته‌ها، پنجره‌ها و اجزای اختصاصی</td></tr>
     <tr><td dir="ltr" align="left"><code>i18n.py</code></td><td align="right">متن‌های فارسی و انگلیسی و دسته‌بندی‌های نرم‌افزار</td></tr>
   </tbody>
