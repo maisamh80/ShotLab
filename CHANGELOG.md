@@ -2,6 +2,11 @@
 
 ## Unreleased — YouTube Capture Bridge
 
+- Add a frameless full-size Frame Review Viewer accessible from Capture,
+  Gallery, and Library search images through a bottom-left hover action.
+- Support fit, actual-size view, wheel zoom, drag-to-pan, previous/next
+  navigation, and original/annotated switching without changing existing
+  thumbnail click or double-click behavior.
 - Treat six-digit HEX searches with or without a leading `#` identically and
   include perceptually nearby matches in both forms.
 - Always include exact HEX matches from any of a frame's five palette slots;
