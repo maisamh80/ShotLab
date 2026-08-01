@@ -405,7 +405,7 @@ OPTIONS = {
         ("day", "روز", "Day"),
         ("night", "شب", "Night"),
         ("dawn", "سپیده‌دم", "Dawn"),
-        ("dusk", "غروب", "Dusk"),
+        ("dusk", "گرگ و میش", "Dusk"),
         ("high_noon", "ظهر", "High Noon"),
         ("sunset", "غروب آفتاب", "Sunset"),
     ],
