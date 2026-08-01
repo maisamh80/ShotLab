@@ -53,7 +53,8 @@ copied into the database or included in a library export.
 - Add and edit shot size, camera angle, location, lens type, time of day,
   lighting style, key quality, mood, tags, title, and notes.
 - Search across all manually entered information.
-- Filter frames by category, HEX code, or perceptually similar colors.
+- Filter frames by category or HEX code—with or without `#`—and include
+  perceptually similar colors.
 - Browse selected frames in a dedicated Gallery Workspace.
 - Resize thumbnails independently in Capture and Gallery workspaces.
 - Add non-destructive annotations with freehand pen, line, arrow, rectangle,
@@ -293,7 +294,8 @@ Website: [storyeco.xyz](https://storyeco.xyz)
 - ثبت و ویرایش اندازهٔ نما، زاویهٔ دوربین، محیط، نوع لنز، زمان، سبک
   نورپردازی، کیفیت نور <bdi dir="ltr">Key</bdi>، مود، تگ‌ها، عنوان و یادداشت
 - جست‌وجو در تمام اطلاعاتی که کاربر وارد کرده است
-- فیلتر براساس دسته‌بندی‌ها، کد <bdi dir="ltr">HEX</bdi> یا رنگ‌های نزدیک از نظر ادراکی
+- فیلتر براساس دسته‌بندی‌ها یا کد <bdi dir="ltr">HEX</bdi> با یا بدون
+  علامت `#` و نمایش رنگ‌های نزدیک از نظر ادراکی
 - مرور فریم‌ها در فضای کاری اختصاصی <bdi dir="ltr">Gallery</bdi>
 - تغییر مستقل اندازهٔ <bdi dir="ltr">Thumbnail</bdi>ها در <bdi dir="ltr">Capture</bdi> و <bdi dir="ltr">Gallery</bdi>
 - حاشیه‌نویسی غیرمخرب روی فریم‌ها با قلم آزاد، خط، فلش، مستطیل، بیضی و متن

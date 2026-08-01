@@ -486,8 +486,8 @@ class RepositoryTests(unittest.TestCase):
         session.open_project(project.id)
         captures = {}
         for name, color in (
-            ("exact", "#C8874C"),
-            ("near", "#D9A060"),
+            ("exact", "#737170"),
+            ("near", "#7B7978"),
             ("far", "#2A6CB0"),
         ):
             source = self.root / f"{name}.png"
@@ -504,26 +504,31 @@ class RepositoryTests(unittest.TestCase):
                 "dominant_colors": [
                     "#2A6CB0",
                     "#193D70",
-                    "#C8874C",
+                    "#737170",
                     "#101820",
-                    "#D9A060",
+                    "#7B7978",
                 ],
                 "color_percentages": [45.0, 30.0, 15.0, 7.0, 3.0],
             },
         )
-        searched = self.repository.search_captures("#C8874C")
+        searched = self.repository.search_captures("#737170")
         self.assertEqual(
             [capture.id for capture in searched],
             [captures["exact"].id, captures["near"].id],
         )
+        searched_without_hash = self.repository.search_captures("737170")
+        self.assertEqual(
+            [capture.id for capture in searched_without_hash],
+            [captures["exact"].id, captures["near"].id],
+        )
         manually_filtered = self.repository.filter_captures(
-            color_hex="#C8874C",
+            color_hex="737170",
         )
         self.assertEqual(
             [capture.id for capture in manually_filtered],
             [captures["exact"].id, captures["near"].id],
         )
-        combined = self.repository.search_captures("near #C8874C")
+        combined = self.repository.search_captures("near 737170")
         self.assertEqual(
             [capture.id for capture in combined],
             [captures["near"].id],

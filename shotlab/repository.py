@@ -61,8 +61,15 @@ def _clean_editorial(editorial: dict[str, Any]) -> dict[str, Any]:
     return cleaned
 
 
-HEX_COLOR_PATTERN = re.compile(r"#[0-9a-fA-F]{6}(?![0-9a-fA-F])")
+HEX_COLOR_PATTERN = re.compile(
+    r"(?<![0-9A-Za-z])#?([0-9a-fA-F]{6})(?![0-9A-Za-z])"
+)
 COLOR_SIMILARITY_THRESHOLD = 26.0
+
+
+def _normalize_hex_color(value: str) -> str | None:
+    match = HEX_COLOR_PATTERN.fullmatch(str(value).strip())
+    return f"#{match.group(1).upper()}" if match else None
 
 
 class Repository:
@@ -548,8 +555,8 @@ class Repository:
         project_id: str | None = None,
     ) -> list[Capture]:
         color_targets = [
-            match.upper()
-            for match in HEX_COLOR_PATTERN.findall(query)
+            f"#{match.group(1).upper()}"
+            for match in HEX_COLOR_PATTERN.finditer(query)
         ]
         text_query = HEX_COLOR_PATTERN.sub(" ", query)
         terms = [
@@ -668,9 +675,10 @@ class Repository:
                 if matches(capture)
             ]
         if color_hex:
+            normalized_color = _normalize_hex_color(color_hex)
             captures = self._similar_color_matches(
                 captures,
-                [color_hex.upper()],
+                [normalized_color or color_hex.upper()],
             )
         return captures
 

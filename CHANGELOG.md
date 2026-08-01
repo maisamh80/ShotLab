@@ -2,6 +2,8 @@
 
 ## Unreleased — YouTube Capture Bridge
 
+- Treat six-digit HEX searches with or without a leading `#` identically and
+  include perceptually nearby matches in both forms.
 - Present frame palettes as five equal-width swatches without coverage labels.
 - Add a two-action palette menu for copying a HEX code or replacing a swatch
   by sampling a color directly from the displayed frame with an eyedropper
