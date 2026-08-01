@@ -70,6 +70,10 @@ from PySide6.QtWidgets import (
 from .. import __version__
 from ..analysis import analyze_image
 from ..backup import export_library, restore_library
+from ..browser_bridge import (
+    BrowserBridgeServer,
+    BrowserCaptureRequest,
+)
 from ..i18n import OPTIONS, option_label, text
 from ..media import format_timecode
 from ..models import Capture, CaptureDraft, Project
@@ -97,6 +101,10 @@ def split_terms(value: str) -> list[str]:
 class WorkerSignals(QObject):
     finished = Signal(object)
     failed = Signal(str)
+
+
+class BrowserBridgeSignals(QObject):
+    capture_received = Signal(object)
 
 
 class CaptureWorker(QRunnable):
@@ -432,9 +440,8 @@ class DeveloperCreditDialog(QDialog):
         panel_layout.addWidget(accent)
 
         message = QLabel(
-            "This program developed by Maisam Hosaini\n"
-            "maisamh80@gmail.com\n"
-            "Mobile number: +98 9123028981"
+            "This program was developed by Maisam Hosaini\n"
+            "https://storyeco.xyz"
         )
         message.setObjectName("DeveloperCreditMessage")
         message.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -646,6 +653,14 @@ class MainWindow(QMainWindow):
         self._displayed_frame_time_ms = 0
         self._last_search_capture_ids: list[str] = []
         self._last_gallery_capture_ids: list[str] = []
+        self._browser_bridge_signals = BrowserBridgeSignals()
+        self._browser_bridge_signals.capture_received.connect(
+            self._receive_browser_capture
+        )
+        self.browser_bridge = BrowserBridgeServer(
+            self._browser_bridge_signals.capture_received.emit
+        )
+        self._browser_bridge_start_error = ""
 
         self.setWindowTitle("ShotLab")
         self.setWindowIcon(
@@ -696,6 +711,11 @@ class MainWindow(QMainWindow):
         self._bind_shortcuts()
         self._apply_language()
         self.refresh_projects()
+        try:
+            self.browser_bridge.start()
+        except OSError as exc:
+            self._browser_bridge_start_error = str(exc)
+            QTimer.singleShot(0, self._show_browser_bridge_unavailable)
 
     def _build_sidebar(self) -> None:
         self.sidebar = QFrame()
@@ -3313,6 +3333,126 @@ class MainWindow(QMainWindow):
             3500,
         )
 
+    @Slot()
+    def _show_browser_bridge_unavailable(self) -> None:
+        if not self._browser_bridge_start_error:
+            return
+        self.show_status(
+            text(self.language, "browser_bridge_unavailable"),
+            5000,
+        )
+
+    @Slot(object)
+    def _receive_browser_capture(self, request: object) -> None:
+        if not isinstance(request, BrowserCaptureRequest):
+            return
+        if not self._ensure_project_context():
+            request.reject(
+                "NO_ACTIVE_LIBRARY",
+                "Open a library in ShotLab before sending a YouTube frame.",
+            )
+            self.show_status(
+                text(self.language, "browser_bridge_no_library"),
+                4000,
+            )
+            return
+        if self.current_draft or self._capture_worker:
+            request.reject(
+                "SHOTLAB_BUSY",
+                "Confirm or discard the current frame before sending another one.",
+            )
+            self.show_status(
+                text(self.language, "browser_bridge_busy"),
+                4000,
+            )
+            return
+
+        received_image = QImage.fromData(request.image_bytes)
+        if (
+            received_image.isNull()
+            or received_image.width() < 16
+            or received_image.height() < 16
+            or received_image.width() > 16384
+            or received_image.height() > 16384
+        ):
+            request.reject(
+                "INVALID_IMAGE",
+                "ShotLab could not decode the frame received from Chrome.",
+                http_status=422,
+            )
+            self.show_status(
+                text(self.language, "browser_bridge_invalid_image"),
+                4000,
+            )
+            return
+
+        cache_folder = self.repository.data_root / "cache"
+        cache_folder.mkdir(parents=True, exist_ok=True)
+        suffix = ".png" if request.image_format == "png" else ".jpg"
+        received_path = (
+            cache_folder
+            / f"youtube_{uuid.uuid4().hex}{suffix}"
+        )
+        draft: CaptureDraft | None = None
+        try:
+            received_path.write_bytes(request.image_bytes)
+            self.player.pause()
+            draft = self.session.create_draft_from_image(
+                received_path,
+                self.frame_storage_mode,
+            )
+            if request.source_title:
+                draft.editorial["title"] = request.source_title
+            self._draft_ready(draft)
+            self.inspector_time.setText(
+                text(
+                    self.language,
+                    "youtube_source_time",
+                    time=self._browser_time_label(
+                        request.source_time_seconds
+                    ),
+                )
+            )
+            if self.isMinimized():
+                self.showNormal()
+            self.raise_()
+            self.activateWindow()
+        except Exception as exc:
+            if draft is not None and self.current_draft is not draft:
+                self.repository.discard_draft(draft)
+            request.reject(
+                "SHOTLAB_IMPORT_FAILED",
+                f"ShotLab could not prepare the frame: {exc}",
+                http_status=500,
+            )
+            self.show_status(
+                text(self.language, "browser_bridge_import_failed"),
+                5000,
+            )
+            return
+        finally:
+            received_path.unlink(missing_ok=True)
+
+        request.accept(
+            libraryName=self.current_project.name if self.current_project else "",
+            storageMode=self.frame_storage_mode,
+        )
+        self.show_status(
+            text(self.language, "youtube_frame_ready"),
+            4000,
+        )
+
+    @staticmethod
+    def _browser_time_label(seconds: float) -> str:
+        total_milliseconds = max(0, round(float(seconds) * 1000))
+        hours, remainder = divmod(total_milliseconds, 3_600_000)
+        minutes, remainder = divmod(remainder, 60_000)
+        whole_seconds, milliseconds = divmod(remainder, 1000)
+        return (
+            f"{hours:02d}:{minutes:02d}:{whole_seconds:02d}."
+            f"{milliseconds:03d}"
+        )
+
     def capture_current_frame(self) -> None:
         if (
             self.stack.currentWidget() is not self.capture_page
@@ -3663,6 +3803,7 @@ class MainWindow(QMainWindow):
         ValidationDialog(message, self.language, self).exec()
 
     def closeEvent(self, event) -> None:
+        self.browser_bridge.stop()
         if self.current_draft:
             self.repository.discard_draft(self.current_draft)
         self.player.stop()

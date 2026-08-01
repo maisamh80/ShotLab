@@ -1,5 +1,28 @@
 # Changelog
 
+## Unreleased — YouTube Capture Bridge
+
+- Update the Chrome extension to 0.1.3 and include the host permission required
+  by `captureVisibleTab` when capture is triggered from the in-page YouTube
+  button; keep script injection limited to YouTube and transmission fixed to
+  ShotLab's local loopback bridge.
+- Automatically return a partially scrolled YouTube player to the visible
+  viewport before measuring and capturing subsequent frames.
+- Temporarily suppress YouTube playback controls, gradients, cards, captions,
+  and other player overlays so captured references contain only video pixels.
+- Add an optional Manifest V3 Chrome extension with a native-looking ShotLab
+  button in the action row below standard YouTube videos.
+- Pause on the current YouTube frame, crop only the visible video image, and
+  send it directly to the running ShotLab app without downloading the video.
+- Add a loopback-only bridge on `127.0.0.1:47831` with source, origin, protocol,
+  image-type, dimension, and payload-size validation.
+- Reuse ShotLab's existing manual-import draft workflow so browser frames open
+  in Capture Workspace with palette extraction and editable information.
+- Add localized browser-capture states and errors plus automated bridge,
+  permission, and extension-contract tests.
+- Package the optional Chrome extension as a separate ZIP when publishing on
+  Windows.
+
 ## 1.0.0 — First Stable Release
 
 - Preserve the same left-aligned Sidebar composition in English and Persian;

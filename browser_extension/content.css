@@ -1,0 +1,158 @@
+#shotlab-youtube-capture {
+  align-items: center;
+  background: var(--yt-spec-badge-chip-background, rgba(255, 255, 255, 0.1));
+  border: 0;
+  border-radius: 18px;
+  box-sizing: border-box;
+  color: var(--yt-spec-text-primary, #f1f1f1);
+  cursor: pointer;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-family: Roboto, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  gap: 7px;
+  height: 36px;
+  justify-content: center;
+  line-height: 36px;
+  margin-inline-start: 8px;
+  min-width: 92px;
+  outline: none;
+  padding: 0 14px;
+  position: relative;
+  white-space: nowrap;
+}
+
+#shotlab-youtube-capture:hover {
+  background: var(--yt-spec-10-percent-layer, rgba(255, 255, 255, 0.2));
+}
+
+#shotlab-youtube-capture:focus-visible {
+  box-shadow: 0 0 0 2px #d8b365;
+}
+
+#shotlab-youtube-capture[disabled] {
+  cursor: wait;
+  opacity: 0.78;
+}
+
+#shotlab-youtube-capture[data-state="success"] {
+  color: #d8b365;
+}
+
+#shotlab-youtube-capture[data-state="error"] {
+  color: #ff7770;
+}
+
+.shotlab-youtube-icon {
+  color: #d8b365;
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: 21px;
+  width: 21px;
+}
+
+.shotlab-youtube-icon svg {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+#shotlab-youtube-capture[data-state="sending"] .shotlab-youtube-icon {
+  animation: shotlab-icon-pulse 0.85s ease-in-out infinite alternate;
+}
+
+@keyframes shotlab-icon-pulse {
+  from {
+    opacity: 0.45;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+#shotlab-youtube-toast {
+  align-items: center;
+  background: rgba(17, 20, 20, 0.97);
+  border: 1px solid rgba(216, 179, 101, 0.5);
+  border-radius: 10px;
+  bottom: 24px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+  box-sizing: border-box;
+  color: #f2f2f2;
+  display: flex;
+  font-family: Roboto, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  inset-inline-end: 24px;
+  line-height: 1.5;
+  max-width: min(420px, calc(100vw - 48px));
+  min-height: 46px;
+  opacity: 0;
+  padding: 11px 16px;
+  pointer-events: none;
+  position: fixed;
+  transform: translateY(12px);
+  transition: opacity 160ms ease, transform 160ms ease;
+  z-index: 2147483647;
+}
+
+#shotlab-youtube-toast[data-visible="true"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#shotlab-youtube-toast[data-kind="error"] {
+  border-color: rgba(255, 119, 112, 0.7);
+}
+
+html[system-icons] #shotlab-youtube-capture,
+html[dark] #shotlab-youtube-capture {
+  color: var(--yt-spec-text-primary, #f1f1f1);
+}
+
+html:not([dark]) #shotlab-youtube-toast {
+  background: rgba(250, 250, 250, 0.98);
+  color: #181818;
+}
+
+/*
+ * captureVisibleTab records Chrome's composited page, including YouTube's
+ * playback chrome. This class is applied only for the few milliseconds needed
+ * to take a frame and is removed in a finally block immediately afterward.
+ */
+.html5-video-player.shotlab-clean-frame-capture {
+  cursor: none !important;
+}
+
+.html5-video-player.shotlab-clean-frame-capture .ytp-gradient-top,
+.html5-video-player.shotlab-clean-frame-capture .ytp-gradient-bottom,
+.html5-video-player.shotlab-clean-frame-capture .ytp-chrome-top,
+.html5-video-player.shotlab-clean-frame-capture .ytp-chrome-bottom,
+.html5-video-player.shotlab-clean-frame-capture .ytp-pause-overlay,
+.html5-video-player.shotlab-clean-frame-capture .ytp-bezel,
+.html5-video-player.shotlab-clean-frame-capture .ytp-tooltip,
+.html5-video-player.shotlab-clean-frame-capture .ytp-popup,
+.html5-video-player.shotlab-clean-frame-capture .ytp-cards-button,
+.html5-video-player.shotlab-clean-frame-capture .ytp-cards-teaser,
+.html5-video-player.shotlab-clean-frame-capture .ytp-ce-element,
+.html5-video-player.shotlab-clean-frame-capture .ytp-endscreen-content,
+.html5-video-player.shotlab-clean-frame-capture .ytp-autonav-endscreen-upnext-container,
+.html5-video-player.shotlab-clean-frame-capture .ytp-caption-window-container,
+.html5-video-player.shotlab-clean-frame-capture .ytp-watermark,
+.html5-video-player.shotlab-clean-frame-capture .ytp-suggested-action,
+.html5-video-player.shotlab-clean-frame-capture .ytp-paid-content-overlay,
+.html5-video-player.shotlab-clean-frame-capture .ytp-iv-player-content,
+.html5-video-player.shotlab-clean-frame-capture .ytp-ad-player-overlay,
+.html5-video-player.shotlab-clean-frame-capture .ytp-ad-player-overlay-layout,
+.html5-video-player.shotlab-clean-frame-capture .ytp-miniplayer-ui,
+.html5-video-player.shotlab-clean-frame-capture .ytp-spinner {
+  animation: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: none !important;
+  visibility: hidden !important;
+}

@@ -45,6 +45,8 @@ copied into the database or included in a library export.
 - Capture the exact frame currently displayed in the player.
 - Move forward or backward one frame at a time.
 - Import still images manually in addition to capturing video frames.
+- Capture the visible frame from a standard YouTube video with the optional
+  ShotLab Capture Bridge Chrome extension.
 - Extract a five-color palette with real image-coverage percentages.
 - Copy HEX values directly from palette colors.
 - Add and edit shot size, camera angle, location, lens type, time of day,
@@ -78,6 +80,7 @@ ShotLab is a Windows desktop application built with:
 | Database | SQLite |
 | Image processing | Pillow |
 | Video metadata and frame extraction | FFmpeg / FFprobe |
+| Optional YouTube capture | Chrome Manifest V3 + local loopback bridge |
 | PDF export | Qt PDF painting |
 | Windows packaging | PyInstaller |
 | Installer | Inno Setup 7 |
@@ -93,6 +96,9 @@ The application is divided into focused modules:
 - `analysis.py` creates thumbnails and calculates dominant color palettes.
 - `backup.py` exports, validates, restores, and recovers ShotLab libraries.
 - `pdf_export.py` generates printable visual-reference sheets.
+- `browser_bridge.py` receives validated browser captures on the local loopback
+  interface.
+- `browser_extension/` contains the optional Manifest V3 Chrome extension.
 - `ui/annotation_board.py` provides the non-destructive drawing, editing, and
   rendering tools used by the Annotation Board.
 - `ui/` contains the PySide6 interface, themes, dialogs, and custom widgets.
@@ -129,6 +135,15 @@ Annotations are stored as editable vector data with normalized coordinates.
 ShotLab creates derived annotated previews and thumbnails while keeping the
 original stored frame unchanged. Annotation data and previews are included when
 a library is exported and restored.
+
+The optional Chrome extension captures only the pixels currently visible
+inside the YouTube player and sends them directly to
+`http://127.0.0.1:47831`. It does not download the video file or stream and
+does not send the captured frame to an internet service. Chrome requires the
+extension's `<all_urls>` host permission for `captureVisibleTab` because
+capture is initiated by the ShotLab button inside the YouTube page. The
+extension's content script still runs only on YouTube, and its capture
+destination remains the fixed local loopback address above.
 
 ## 🛠️ Running from Source
 
@@ -168,6 +183,18 @@ To prepare an optional offline cache of the Python dependencies:
 PowerShell does not execute commands from the current directory implicitly,
 so the `.\` prefix is required. The same commands also work in Command Prompt.
 
+## 🌐 Optional YouTube Capture Extension
+
+With ShotLab running, load the `browser_extension` directory as an unpacked
+extension from `chrome://extensions`. It adds a native-looking **ShotLab**
+button to the action row below standard YouTube videos. Installation, usage,
+permission rationale, PowerShell bridge test, privacy details, and current
+limitations are documented in
+[`browser_extension/README.md`](browser_extension/README.md).
+The extension is also maintained as the standalone
+[ShotLab Capture Bridge](https://github.com/maisamh80/ShotLab-Capture-Bridge)
+repository.
+
 ## 📦 Building the Portable and Installer Releases
 
 Install the 64-bit version of Inno Setup 7, then run:
@@ -177,14 +204,16 @@ Install the 64-bit version of Inno Setup 7, then run:
 ```
 
 The script runs the quality-assurance suite, builds the application with
-PyInstaller, creates the portable archive, and generates the Windows installer.
+PyInstaller, creates the portable and Chrome-extension archives, and generates
+the Windows installer.
 
 The final files are created in:
 
 ```text
 release/
 ├── ShotLab_Portable_v1.0.0.zip
-└── ShotLab_Setup_v1.0.0.exe
+├── ShotLab_Setup_v1.0.0.exe
+└── ShotLab_Chrome_Extension_v0.1.3.zip
 ```
 
 To build only the direct PyInstaller application folder:
@@ -255,6 +284,8 @@ Website: [storyeco.xyz](https://storyeco.xyz)
 - کپچر دقیق همان فریمی که در <bdi dir="ltr">Player</bdi> نمایش داده می‌شود
 - پیمایش فریم‌به‌فریم به جلو و عقب
 - ورود دستی تصاویر ثابت در کنار کپچر از ویدئو
+- کپچر فریم قابل‌مشاهدهٔ ویدیوی یوتیوب با افزونهٔ اختیاری
+  <bdi dir="ltr">ShotLab Capture Bridge</bdi> برای <bdi dir="ltr">Chrome</bdi>
 - استخراج پالت پنج‌رنگ همراه درصد واقعی پوشش هر رنگ در تصویر
 - کپی مستقیم کد <bdi dir="ltr">HEX</bdi> رنگ‌های پالت
 - ثبت و ویرایش اندازهٔ نما، زاویهٔ دوربین، محیط، نوع لنز، زمان، سبک
@@ -292,6 +323,7 @@ Website: [storyeco.xyz](https://storyeco.xyz)
     <tr><td align="right">پایگاه داده</td><td dir="ltr" align="left"><code>SQLite</code></td></tr>
     <tr><td align="right">پردازش تصویر</td><td dir="ltr" align="left"><code>Pillow</code></td></tr>
     <tr><td align="right">اطلاعات و استخراج فریم ویدئو</td><td dir="ltr" align="left"><code>FFmpeg / FFprobe</code></td></tr>
+    <tr><td align="right">کپچر اختیاری یوتیوب</td><td dir="ltr" align="left"><code>Chrome Manifest V3 + local loopback bridge</code></td></tr>
     <tr><td align="right">خروجی پی‌دی‌اف</td><td dir="ltr" align="left"><code>Qt PDF painting</code></td></tr>
     <tr><td align="right">بسته‌بندی ویندوز</td><td dir="ltr" align="left"><code>PyInstaller</code></td></tr>
     <tr><td align="right">ساخت فایل نصبی</td><td dir="ltr" align="left"><code>Inno Setup 7</code></td></tr>
@@ -316,6 +348,8 @@ Website: [storyeco.xyz](https://storyeco.xyz)
     <tr><td dir="ltr" align="left"><code>analysis.py</code></td><td align="right">تولید تصاویر بندانگشتی و محاسبهٔ پالت رنگی غالب</td></tr>
     <tr><td dir="ltr" align="left"><code>backup.py</code></td><td align="right">خروجی، اعتبارسنجی، بازیابی و ترمیم کتابخانه‌ها</td></tr>
     <tr><td dir="ltr" align="left"><code>pdf_export.py</code></td><td align="right">ساخت شیت‌های مرجع پی‌دی‌اف</td></tr>
+    <tr><td dir="ltr" align="left"><code>browser_bridge.py</code></td><td align="right">دریافت و اعتبارسنجی فریم‌های مرورگر روی رابط لوپ‌بک محلی</td></tr>
+    <tr><td dir="ltr" align="left"><code>browser_extension/</code></td><td align="right">افزونهٔ اختیاری کروم با استاندارد منیفست نسخهٔ سه</td></tr>
     <tr><td dir="ltr" align="left"><code>ui/annotation_board.py</code></td><td align="right">ابزارهای ترسیم، ویرایش و رندر غیرمخرب حاشیه‌نویسی‌ها</td></tr>
     <tr><td dir="ltr" align="left"><code>ui/</code></td><td align="right">رابط کاربری، پوسته‌ها، پنجره‌ها و اجزای اختصاصی</td></tr>
     <tr><td dir="ltr" align="left"><code>i18n.py</code></td><td align="right">متن‌های فارسی و انگلیسی و دسته‌بندی‌های نرم‌افزار</td></tr>
@@ -353,6 +387,16 @@ projects/
 می‌شوند. شات‌لب برای نمایش آن‌ها نسخه‌های مشتق‌شده و تصاویر بندانگشتی جداگانه
 می‌سازد و فریم اصلی را بدون تغییر نگه می‌دارد. اطلاعات و پیش‌نمایش‌های
 حاشیه‌نویسی هنگام خروجی‌گرفتن و بازیابی کتابخانه نیز حفظ می‌شوند.
+
+افزونهٔ اختیاری کروم فقط پیکسل‌های قابل‌مشاهده داخل پلیر یوتیوب را کپچر می‌کند
+و مستقیماً به آدرس محلی
+<bdi dir="ltr"><code>http://127.0.0.1:47831</code></bdi>
+می‌فرستد. افزونه فایل یا استریم ویدئو را دانلود نمی‌کند و فریم کپچر‌شده را به
+هیچ سرویس اینترنتی نمی‌فرستد. کروم به‌دلیل آغازشدن کپچر از دکمهٔ ShotLab داخل
+صفحهٔ یوتیوب، برای <bdi dir="ltr"><code>captureVisibleTab</code></bdi> مجوز
+<bdi dir="ltr"><code>&lt;all_urls&gt;</code></bdi> را الزامی می‌کند. با وجود
+این مجوز در سطح مرورگر، اسکریپت افزونه فقط روی یوتیوب اجرا می‌شود و مقصد ارسال
+همان آدرس ثابت لوپ‌بک محلی بالاست.
 
 ## 🛠️ اجرای سورس
 
@@ -393,6 +437,21 @@ vendor/
 <bdi dir="ltr"><code>.\</code></bdi> الزامی است. همین فرمان‌ها در
 <bdi dir="ltr">Command Prompt</bdi> نیز قابل اجرا هستند.
 
+## 🌐 افزونهٔ اختیاری کپچر یوتیوب
+
+درحالی‌که <bdi dir="ltr">ShotLab</bdi> باز است، پوشهٔ
+<bdi dir="ltr"><code>browser_extension</code></bdi> را از صفحهٔ
+<bdi dir="ltr"><code>chrome://extensions</code></bdi> به‌صورت
+<bdi dir="ltr">Load unpacked</bdi> نصب کنید. افزونه یک دکمهٔ
+<bdi dir="ltr"><b>ShotLab</b></bdi> هم‌ظاهر با دکمه‌های اصلی، زیر ویدیوهای
+معمولی یوتیوب اضافه می‌کند. راهنمای کامل نصب، استفاده، حریم خصوصی و
+دلیل مجوز، فرمان آزمایش پل در پاورشل و محدودیت‌های فعلی در فایل
+<a href="browser_extension/README.md"><code>browser_extension/README.md</code></a>
+قرار دارد.
+نسخهٔ مستقل افزونه نیز در ریپوزیتوری
+<a href="https://github.com/maisamh80/ShotLab-Capture-Bridge"><bdi dir="ltr">ShotLab Capture Bridge</bdi></a>
+نگهداری می‌شود.
+
 ## 📦 ساخت نسخهٔ پرتابل و نصبی
 
 ابتدا نسخهٔ ۶۴ بیتی <bdi dir="ltr">Inno Setup 7</bdi> را نصب و سپس اجرا کنید:
@@ -402,14 +461,16 @@ vendor/
 ```
 
 این اسکریپت آزمون‌های کنترل کیفیت را اجرا می‌کند، نرم‌افزار را با <bdi dir="ltr">PyInstaller</bdi>
-می‌سازد، فایل پرتابل را ایجاد می‌کند و <bdi dir="ltr">Installer</bdi> ویندوز را می‌سازد.
+می‌سازد، فایل‌های پرتابل و افزونهٔ کروم را ایجاد می‌کند و
+<bdi dir="ltr">Installer</bdi> ویندوز را می‌سازد.
 
 فایل‌های نهایی در این مسیر ایجاد می‌شوند:
 
 ```text
 release/
 ├── ShotLab_Portable_v1.0.0.zip
-└── ShotLab_Setup_v1.0.0.exe
+├── ShotLab_Setup_v1.0.0.exe
+└── ShotLab_Chrome_Extension_v0.1.3.zip
 ```
 
 برای ساختن فقط پوشهٔ مستقیم برنامه با <bdi dir="ltr">PyInstaller</bdi>:
