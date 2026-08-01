@@ -2030,6 +2030,158 @@ QSplitter#CaptureVerticalSplitter::handle:vertical:hover {
 }
 """
 
+FRAME_REVIEW_DARK = """
+QDialog#FrameReviewDialog {
+    background: #050708;
+}
+QFrame#FrameReviewPanel {
+    background: #080B0C;
+    border: none;
+}
+QFrame#FrameReviewBar {
+    background: #101516;
+    border: 1px solid #27302E;
+    border-radius: 9px;
+}
+QLabel#FrameReviewTitle {
+    color: #F4F2EB;
+    font-size: 13pt;
+    font-weight: 600;
+}
+QLabel#FrameReviewMeta,
+QLabel#FrameReviewZoom {
+    color: #D8B365;
+    font-size: 10.5pt;
+}
+QLabel#FrameReviewHint {
+    color: #89918F;
+    font-size: 9.5pt;
+}
+QPushButton#FrameReviewAction {
+    min-height: 34px;
+    padding: 0 14px;
+    color: #E8C46F;
+    background: #171D1D;
+    border: 1px solid #695A38;
+    border-radius: 7px;
+}
+QPushButton#FrameReviewAction:hover {
+    background: #282315;
+    border-color: #D8B365;
+}
+QPushButton#FrameReviewClose {
+    min-width: 36px;
+    max-width: 36px;
+    min-height: 34px;
+    max-height: 34px;
+    padding: 0;
+    color: #D8B365;
+    background: transparent;
+    border: 1px solid #39413F;
+    border-radius: 7px;
+    font-size: 18pt;
+}
+QPushButton#FrameReviewClose:hover {
+    color: #F4F2EB;
+    background: #30251C;
+    border-color: #D8B365;
+}
+QPushButton#FrameReviewNav {
+    min-width: 50px;
+    max-width: 50px;
+    min-height: 72px;
+    max-height: 72px;
+    padding: 0;
+    background: #101516;
+    border: 1px solid #27302E;
+    border-radius: 9px;
+}
+QPushButton#FrameReviewNav:hover {
+    background: #282315;
+    border-color: #D8B365;
+}
+QPushButton#FrameReviewNav:disabled {
+    background: #0B0F10;
+    border-color: #171C1C;
+}
+"""
+
+FRAME_REVIEW_LIGHT = """
+QDialog#FrameReviewDialog {
+    background: #DDE1DE;
+}
+QFrame#FrameReviewPanel {
+    background: #EDF0ED;
+    border: none;
+}
+QFrame#FrameReviewBar {
+    background: #FFFFFF;
+    border: 1px solid #C8CECB;
+    border-radius: 9px;
+}
+QLabel#FrameReviewTitle {
+    color: #303332;
+    font-size: 13pt;
+    font-weight: 600;
+}
+QLabel#FrameReviewMeta,
+QLabel#FrameReviewZoom {
+    color: #A98233;
+    font-size: 10.5pt;
+}
+QLabel#FrameReviewHint {
+    color: #777C79;
+    font-size: 9.5pt;
+}
+QPushButton#FrameReviewAction {
+    min-height: 34px;
+    padding: 0 14px;
+    color: #6F5523;
+    background: #FFF8E8;
+    border: 1px solid #D8B365;
+    border-radius: 7px;
+}
+QPushButton#FrameReviewAction:hover {
+    background: #F6E8C6;
+    border-color: #A98233;
+}
+QPushButton#FrameReviewClose {
+    min-width: 36px;
+    max-width: 36px;
+    min-height: 34px;
+    max-height: 34px;
+    padding: 0;
+    color: #A98233;
+    background: transparent;
+    border: 1px solid #C8CECB;
+    border-radius: 7px;
+    font-size: 18pt;
+}
+QPushButton#FrameReviewClose:hover {
+    color: #303332;
+    background: #F6E8C6;
+    border-color: #A98233;
+}
+QPushButton#FrameReviewNav {
+    min-width: 50px;
+    max-width: 50px;
+    min-height: 72px;
+    max-height: 72px;
+    padding: 0;
+    background: #FFFFFF;
+    border: 1px solid #C8CECB;
+    border-radius: 9px;
+}
+QPushButton#FrameReviewNav:hover {
+    background: #F6E8C6;
+    border-color: #A98233;
+}
+QPushButton#FrameReviewNav:disabled {
+    background: #E7EAE7;
+    border-color: #D7DCDA;
+}
+"""
+
 PERSIAN_FONT_OVERRIDE = """
 QWidget, QMainWindow, QDialog, QLabel, QPushButton, QLineEdit, QComboBox,
 QTextEdit, QListWidget, QMenu, QToolTip, QRadioButton {
@@ -2047,12 +2199,14 @@ def stylesheet(theme: str, language: str = "en") -> str:
             LIGHT_STYLESHEET
             + FINAL_LIGHT_OVERRIDES
             + REFERENCE_LIGHT_STYLESHEET
+            + FRAME_REVIEW_LIGHT
         )
     else:
         result = (
             APP_STYLESHEET
             + FINAL_DARK_OVERRIDES
             + REFERENCE_DARK_STYLESHEET
+            + FRAME_REVIEW_DARK
         )
     if language == "fa":
         result += PERSIAN_FONT_OVERRIDE

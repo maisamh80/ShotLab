@@ -255,6 +255,48 @@ class FinalUiContractTests(unittest.TestCase):
         self.assertIn("filevers=(1, 0, 0, 0)", version_info)
         self.assertIn("StringStruct('ProductVersion', '1.0.0')", version_info)
 
+    def test_full_size_frame_review_contracts_are_present(self) -> None:
+        main_source = (
+            ROOT / "shotlab" / "ui" / "main_window.py"
+        ).read_text(encoding="utf-8")
+        widgets_source = (
+            ROOT / "shotlab" / "ui" / "widgets.py"
+        ).read_text(encoding="utf-8")
+        review_source = (
+            ROOT / "shotlab" / "ui" / "frame_review.py"
+        ).read_text(encoding="utf-8")
+        styles_source = (
+            ROOT / "shotlab" / "ui" / "styles.py"
+        ).read_text(encoding="utf-8")
+
+        self.assertTrue(
+            (ROOT / "assets" / "final_ui" / "arrows-out.svg").is_file()
+        )
+        self.assertIn("class ReviewableThumbnailList", widgets_source)
+        self.assertIn("review_requested = Signal(str)", widgets_source)
+        self.assertEqual(
+            main_source.count("= ReviewableThumbnailList()"),
+            3,
+        )
+        self.assertIn("self.preview_label.review_requested.connect", main_source)
+        self.assertIn(
+            "self.gallery_detail_image.review_requested.connect",
+            main_source,
+        )
+        self.assertIn("class FrameReviewCanvas", review_source)
+        self.assertIn("class FrameReviewDialog", review_source)
+        self.assertIn("def wheelEvent", review_source)
+        self.assertIn("def mouseDoubleClickEvent", review_source)
+        self.assertIn("def _toggle_annotations", review_source)
+        self.assertIn("Qt.WindowState.WindowFullScreen", main_source)
+        self.assertIn("QDialog#FrameReviewDialog", styles_source)
+        self.assertIn("FRAME_REVIEW_DARK", styles_source)
+        self.assertIn("FRAME_REVIEW_LIGHT", styles_source)
+        self.assertEqual(
+            STRINGS["fa"]["open_frame_review"],
+            "نمایش بزرگ فریم",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

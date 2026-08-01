@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 from pathlib import Path
 
-from PySide6.QtCore import QPoint, QSize, Qt, QTimer, Signal
+from PySide6.QtCore import QPoint, QRect, QSize, Qt, QTimer, Signal
 from PySide6.QtGui import (
     QColor,
     QCursor,
@@ -23,18 +23,47 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QLineEdit,
+    QListWidget,
+    QListWidgetItem,
     QMenu,
     QPushButton,
     QSizePolicy,
     QSlider,
     QStyle,
     QStyleOptionSlider,
+    QToolTip,
     QVBoxLayout,
     QWidget,
 )
 
 from ..i18n import OPTIONS, option_label, text
 from ..models import Project
+
+
+def _review_icon_pixmap(size: int = 22) -> QPixmap:
+    path = (
+        Path(__file__).resolve().parents[2]
+        / "assets"
+        / "final_ui"
+        / "arrows-out.svg"
+    )
+    return QIcon(str(path)).pixmap(QSize(size, size))
+
+
+def _paint_review_badge(
+    painter: QPainter,
+    rect: QRect,
+    icon: QPixmap,
+) -> None:
+    painter.save()
+    painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
+    painter.setPen(QPen(QColor("#7D6A43"), 1))
+    painter.setBrush(QColor(8, 11, 12, 218))
+    painter.drawRoundedRect(rect, 8, 8)
+    if not icon.isNull():
+        target = rect.adjusted(7, 7, -7, -7)
+        painter.drawPixmap(target, icon)
+    painter.restore()
 
 
 class ColorSwatch(QLabel):
@@ -136,16 +165,51 @@ class FrameColorPickerLabel(QLabel):
 
     color_picked = Signal(str)
     pick_cancelled = Signal()
+    review_requested = Signal()
 
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self._color_pick_active = False
+        self._review_icon = _review_icon_pixmap()
+        self._review_tooltip = ""
+        self._review_icon_hovered = False
+        self.setMouseTracking(True)
+
+    def set_review_tooltip(self, value: str) -> None:
+        self._review_tooltip = str(value)
+
+    def _displayed_pixmap_rect(self) -> QRect:
+        pixmap = self.pixmap()
+        if pixmap is None or pixmap.isNull():
+            return QRect()
+        ratio = max(float(pixmap.devicePixelRatio()), 1.0)
+        width = round(pixmap.width() / ratio)
+        height = round(pixmap.height() / ratio)
+        return QRect(
+            round((self.width() - width) / 2.0),
+            round((self.height() - height) / 2.0),
+            width,
+            height,
+        )
+
+    def _review_badge_rect(self) -> QRect:
+        image_rect = self._displayed_pixmap_rect()
+        if image_rect.isEmpty():
+            return QRect()
+        size = max(30, min(38, image_rect.width() // 4, image_rect.height() // 4))
+        return QRect(
+            image_rect.left() + 8,
+            image_rect.bottom() - size - 7,
+            size,
+            size,
+        )
 
     def begin_color_pick(self) -> bool:
         pixmap = self.pixmap()
         if pixmap is None or pixmap.isNull():
             return False
         self._color_pick_active = True
+        self._review_icon_hovered = False
         cursor_path = (
             Path(__file__).resolve().parents[2]
             / "assets"
@@ -157,13 +221,42 @@ class FrameColorPickerLabel(QLabel):
             self.setCursor(Qt.CursorShape.CrossCursor)
         else:
             self.setCursor(QCursor(cursor_pixmap, 5, 23))
+        self.update()
         return True
 
     def cancel_color_pick(self) -> None:
         self._color_pick_active = False
         self.unsetCursor()
+        self.update()
+
+    def paintEvent(self, event) -> None:
+        super().paintEvent(event)
+        pointer = self.mapFromGlobal(QCursor.pos())
+        if (
+            self._color_pick_active
+            or not self.underMouse()
+            or not self._displayed_pixmap_rect().contains(pointer)
+            or self._review_badge_rect().isEmpty()
+        ):
+            return
+        painter = QPainter(self)
+        _paint_review_badge(
+            painter,
+            self._review_badge_rect(),
+            self._review_icon,
+        )
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
+        if (
+            not self._color_pick_active
+            and event.button() == Qt.MouseButton.LeftButton
+            and self._review_badge_rect().contains(
+                event.position().toPoint()
+            )
+        ):
+            self.review_requested.emit()
+            event.accept()
+            return
         if not self._color_pick_active:
             super().mousePressEvent(event)
             return
@@ -181,30 +274,196 @@ class FrameColorPickerLabel(QLabel):
             return
         super().mousePressEvent(event)
 
+    def mouseMoveEvent(self, event: QMouseEvent) -> None:
+        if not self._color_pick_active:
+            hovered = self._review_badge_rect().contains(
+                event.position().toPoint()
+            )
+            if hovered != self._review_icon_hovered:
+                self._review_icon_hovered = hovered
+                self.setCursor(
+                    Qt.CursorShape.PointingHandCursor
+                    if hovered
+                    else Qt.CursorShape.ArrowCursor
+                )
+                if hovered and self._review_tooltip:
+                    QToolTip.showText(
+                        event.globalPosition().toPoint(),
+                        self._review_tooltip,
+                        self,
+                    )
+                else:
+                    QToolTip.hideText()
+            self.update()
+        super().mouseMoveEvent(event)
+
+    def enterEvent(self, event) -> None:
+        self.update()
+        super().enterEvent(event)
+
+    def leaveEvent(self, event) -> None:
+        self._review_icon_hovered = False
+        if not self._color_pick_active:
+            self.unsetCursor()
+        QToolTip.hideText()
+        self.update()
+        super().leaveEvent(event)
+
     def _color_at(self, position: QPoint) -> str:
         pixmap = self.pixmap()
         if pixmap is None or pixmap.isNull():
             return ""
-        ratio = max(float(pixmap.devicePixelRatio()), 1.0)
-        display_width = pixmap.width() / ratio
-        display_height = pixmap.height() / ratio
-        left = (self.width() - display_width) / 2.0
-        top = (self.height() - display_height) / 2.0
-        if not (
-            left <= position.x() < left + display_width
-            and top <= position.y() < top + display_height
-        ):
+        display_rect = self._displayed_pixmap_rect()
+        if not display_rect.contains(position):
             return ""
         image = pixmap.toImage()
         x = min(
             image.width() - 1,
-            max(0, int((position.x() - left) * image.width() / display_width)),
+            max(
+                0,
+                int(
+                    (position.x() - display_rect.left())
+                    * image.width()
+                    / display_rect.width()
+                ),
+            ),
         )
         y = min(
             image.height() - 1,
-            max(0, int((position.y() - top) * image.height() / display_height)),
+            max(
+                0,
+                int(
+                    (position.y() - display_rect.top())
+                    * image.height()
+                    / display_rect.height()
+                ),
+            ),
         )
         return image.pixelColor(x, y).name(QColor.NameFormat.HexRgb).upper()
+
+
+class ReviewableThumbnailList(QListWidget):
+    """Icon-mode list that reveals a review action over the hovered image."""
+
+    review_requested = Signal(str)
+
+    def __init__(self, parent=None) -> None:
+        super().__init__(parent)
+        self._review_icon = _review_icon_pixmap()
+        self._review_tooltip = ""
+        self._hovered_item: QListWidgetItem | None = None
+        self._review_icon_hovered = False
+        self.setMouseTracking(True)
+        self.viewport().setMouseTracking(True)
+
+    def set_review_tooltip(self, value: str) -> None:
+        self._review_tooltip = str(value)
+
+    def _thumbnail_image_rect(
+        self,
+        item: QListWidgetItem | None,
+    ) -> QRect:
+        if item is None or item.icon().isNull():
+            return QRect()
+        item_rect = self.visualItemRect(item)
+        icon_size = self.iconSize()
+        return QRect(
+            item_rect.left() + (item_rect.width() - icon_size.width()) // 2,
+            item_rect.top() + 2,
+            icon_size.width(),
+            icon_size.height(),
+        )
+
+    def _review_badge_rect(
+        self,
+        item: QListWidgetItem | None,
+    ) -> QRect:
+        image_rect = self._thumbnail_image_rect(item)
+        if image_rect.isEmpty():
+            return QRect()
+        size = max(
+            28,
+            min(36, image_rect.width() // 4, image_rect.height() // 3),
+        )
+        return QRect(
+            image_rect.left() + 7,
+            image_rect.bottom() - size - 6,
+            size,
+            size,
+        )
+
+    def _clear_review_hover(self) -> None:
+        self._hovered_item = None
+        self._review_icon_hovered = False
+        QToolTip.hideText()
+        self.viewport().update()
+
+    def clear(self) -> None:
+        self._clear_review_hover()
+        super().clear()
+
+    def paintEvent(self, event) -> None:
+        super().paintEvent(event)
+        badge = self._review_badge_rect(self._hovered_item)
+        if badge.isEmpty():
+            return
+        painter = QPainter(self.viewport())
+        _paint_review_badge(painter, badge, self._review_icon)
+
+    def mouseMoveEvent(self, event: QMouseEvent) -> None:
+        item = self.itemAt(event.position().toPoint())
+        if not self._thumbnail_image_rect(item).contains(
+            event.position().toPoint()
+        ):
+            item = None
+        changed_item = item is not self._hovered_item
+        self._hovered_item = item
+        hovered = self._review_badge_rect(item).contains(
+            event.position().toPoint()
+        )
+        if changed_item or hovered != self._review_icon_hovered:
+            self._review_icon_hovered = hovered
+            if hovered and self._review_tooltip:
+                QToolTip.showText(
+                    event.globalPosition().toPoint(),
+                    self._review_tooltip,
+                    self.viewport(),
+                )
+            else:
+                QToolTip.hideText()
+            self.viewport().update()
+        super().mouseMoveEvent(event)
+
+    def mousePressEvent(self, event: QMouseEvent) -> None:
+        item = self.itemAt(event.position().toPoint())
+        if (
+            event.button() == Qt.MouseButton.LeftButton
+            and self._review_badge_rect(item).contains(
+                event.position().toPoint()
+            )
+        ):
+            capture_id = str(
+                item.data(Qt.ItemDataRole.UserRole)
+                if item is not None
+                else ""
+            )
+            if capture_id:
+                self.review_requested.emit(capture_id)
+            event.accept()
+            return
+        super().mousePressEvent(event)
+
+    def leaveEvent(self, event) -> None:
+        self._clear_review_hover()
+        super().leaveEvent(event)
+
+    def wheelEvent(self, event) -> None:
+        self._clear_review_hover()
+        super().wheelEvent(event)
+
+    def resizeEvent(self, event) -> None:
+        self._clear_review_hover()
+        super().resizeEvent(event)
 
 
 class HoverHoldLabel(QLabel):
