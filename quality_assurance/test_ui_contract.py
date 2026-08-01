@@ -76,6 +76,10 @@ class FinalUiContractTests(unittest.TestCase):
             "روز",
         )
         self.assertEqual(
+            option_label("fa", "time_of_day", "dusk"),
+            "گرگ و میش",
+        )
+        self.assertEqual(
             option_label("fa", "shot_size", "CU"),
             "Close-Up",
         )
