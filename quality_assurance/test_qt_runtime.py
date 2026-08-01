@@ -17,8 +17,12 @@ try:
     from shotlab.pdf_export import _font
     from shotlab.repository import Repository
     from shotlab.session import CaptureSession
+    from shotlab.ui.frame_review import FrameReviewCanvas
     from shotlab.ui.main_window import MainWindow
-    from shotlab.ui.widgets import FrameColorPickerLabel
+    from shotlab.ui.widgets import (
+        FrameColorPickerLabel,
+        ReviewableThumbnailList,
+    )
 except ModuleNotFoundError:
     QT_AVAILABLE = False
 else:
@@ -49,6 +53,22 @@ class QtRuntimeSmokeTests(unittest.TestCase):
         self.assertTrue(preview.begin_color_pick())
         self.assertEqual(preview._color_at(QPoint(50, 50)), "#12ABEF")
         preview.cancel_color_pick()
+
+    def test_frame_review_canvas_supports_fit_and_actual_size(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="shotlab-review-test-") as folder:
+            image_path = Path(folder) / "frame.png"
+            pixmap = QPixmap(1280, 720)
+            pixmap.fill(QColor("#2A4C6B"))
+            self.assertTrue(pixmap.save(str(image_path)))
+            canvas = FrameReviewCanvas("en")
+            canvas.resize(640, 360)
+            canvas.set_image(image_path)
+            self.assertFalse(canvas.image.isNull())
+            self.assertAlmostEqual(canvas._scale(), 0.5, places=2)
+            canvas.show_actual_size()
+            self.assertAlmostEqual(canvas._scale(), 1.0, places=2)
+            canvas.reset_fit()
+            self.assertAlmostEqual(canvas._scale(), 0.5, places=2)
 
     def test_main_window_constructs_with_final_ui(self) -> None:
         with tempfile.TemporaryDirectory(prefix="shotlab-ui-test-") as folder:
@@ -91,6 +111,22 @@ class QtRuntimeSmokeTests(unittest.TestCase):
                 self.assertEqual(
                     window.captures_title.objectName(),
                     "NeutralSectionTitle",
+                )
+                self.assertIsInstance(
+                    window.global_results_list,
+                    ReviewableThumbnailList,
+                )
+                self.assertIsInstance(
+                    window.capture_list,
+                    ReviewableThumbnailList,
+                )
+                self.assertIsInstance(
+                    window.gallery_list,
+                    ReviewableThumbnailList,
+                )
+                self.assertEqual(
+                    window.gallery_list._review_tooltip,
+                    "Open Frame Review",
                 )
                 self.assertEqual(
                     window.library_filters.FILTER_KEYS,
