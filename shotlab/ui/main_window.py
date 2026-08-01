@@ -83,12 +83,14 @@ from ..repository import Repository
 from ..session import CaptureSession
 from .styles import stylesheet
 from .annotation_board import AnnotationBoardDialog
+from .frame_review import FrameReviewDialog
 from .widgets import (
     CaptureFilterPanel,
     ColorSwatch,
     FrameColorPickerLabel,
     HoverHoldLabel,
     ProjectCard,
+    ReviewableThumbnailList,
     TimelineSlider,
 )
 
@@ -1325,12 +1327,15 @@ class MainWindow(QMainWindow):
         search_toolbar.addWidget(self.search_thumbnail_shrink_button)
         search_toolbar.addWidget(self.search_zoom_label)
         search_toolbar.addWidget(self.search_thumbnail_grow_button)
-        self.global_results_list = QListWidget()
+        self.global_results_list = ReviewableThumbnailList()
         self.global_results_list.setObjectName("ThumbnailList")
         self.global_results_list.setViewMode(QListView.ViewMode.IconMode)
         self.global_results_list.setResizeMode(QListView.ResizeMode.Adjust)
         self.global_results_list.itemDoubleClicked.connect(
             self._global_result_clicked
+        )
+        self.global_results_list.review_requested.connect(
+            self._review_search_capture
         )
         self._apply_search_thumbnail_size()
         self.no_search_results_label = QLabel()
@@ -1563,11 +1568,14 @@ class MainWindow(QMainWindow):
         captures_header.addWidget(self.capture_zoom_label)
         captures_header.addWidget(self.capture_thumbnail_grow_button)
         captures_layout.addLayout(captures_header)
-        self.capture_list = QListWidget()
+        self.capture_list = ReviewableThumbnailList()
         self.capture_list.setObjectName("ThumbnailList")
         self.capture_list.setViewMode(QListView.ViewMode.IconMode)
         self.capture_list.setResizeMode(QListView.ResizeMode.Adjust)
         self.capture_list.itemClicked.connect(self._capture_item_clicked)
+        self.capture_list.review_requested.connect(
+            self._review_capture_thumbnail
+        )
         capture_list_frame = QFrame()
         capture_list_frame.setObjectName("GalleryBrowser")
         capture_list_layout = QVBoxLayout(capture_list_frame)
@@ -1605,6 +1613,9 @@ class MainWindow(QMainWindow):
         )
         self.preview_label.pick_cancelled.connect(
             self._cancel_palette_color_pick
+        )
+        self.preview_label.review_requested.connect(
+            self._review_capture_preview
         )
         inspector_layout.addWidget(self.preview_label)
 
@@ -1791,11 +1802,14 @@ class MainWindow(QMainWindow):
         gallery_list_frame.setObjectName("GalleryBrowser")
         gallery_list_layout = QVBoxLayout(gallery_list_frame)
         gallery_list_layout.setContentsMargins(12, 12, 12, 12)
-        self.gallery_list = QListWidget()
+        self.gallery_list = ReviewableThumbnailList()
         self.gallery_list.setObjectName("ThumbnailList")
         self.gallery_list.setViewMode(QListView.ViewMode.IconMode)
         self.gallery_list.setResizeMode(QListView.ResizeMode.Adjust)
         self.gallery_list.itemClicked.connect(self._gallery_item_clicked)
+        self.gallery_list.review_requested.connect(
+            self._review_gallery_thumbnail
+        )
         gallery_list_layout.addWidget(self.gallery_list)
         gallery_browser_layout.addWidget(gallery_list_frame, 1)
         self._apply_gallery_thumbnail_size()
@@ -1831,6 +1845,9 @@ class MainWindow(QMainWindow):
         )
         self.gallery_detail_image.pick_cancelled.connect(
             self._cancel_palette_color_pick
+        )
+        self.gallery_detail_image.review_requested.connect(
+            self._review_gallery_detail
         )
         self.gallery_detail_palette = QFrame()
         self.gallery_detail_palette.setObjectName("DetailPalette")
@@ -2074,6 +2091,12 @@ class MainWindow(QMainWindow):
             text(self.language, "decrease_thumbnail_size")
         )
         self.no_search_results_label.setText(text(self.language, "no_search_results"))
+        review_tooltip = text(self.language, "open_frame_review")
+        self.global_results_list.set_review_tooltip(review_tooltip)
+        self.capture_list.set_review_tooltip(review_tooltip)
+        self.gallery_list.set_review_tooltip(review_tooltip)
+        self.preview_label.set_review_tooltip(review_tooltip)
+        self.gallery_detail_image.set_review_tooltip(review_tooltip)
         self.capture_to_gallery_button.setText(
             text(self.language, "gallery")
         )
@@ -2457,6 +2480,101 @@ class MainWindow(QMainWindow):
             return
         self.open_gallery(capture.project_id)
         self.show_gallery_capture(capture.id)
+
+    @staticmethod
+    def _capture_ids_from_list(widget: QListWidget) -> list[str]:
+        capture_ids: list[str] = []
+        for index in range(widget.count()):
+            capture_id = str(
+                widget.item(index).data(Qt.ItemDataRole.UserRole) or ""
+            )
+            if capture_id:
+                capture_ids.append(capture_id)
+        return capture_ids
+
+    def _review_search_capture(self, capture_id: str) -> None:
+        self._open_frame_review(
+            capture_id,
+            self._last_search_capture_ids,
+        )
+
+    def _review_capture_thumbnail(self, capture_id: str) -> None:
+        self._open_frame_review(
+            capture_id,
+            self._capture_ids_from_list(self.capture_list),
+        )
+
+    def _review_gallery_thumbnail(self, capture_id: str) -> None:
+        self._open_frame_review(
+            capture_id,
+            self._last_gallery_capture_ids,
+        )
+
+    def _review_capture_preview(self) -> None:
+        if self.current_draft is not None:
+            dialog = FrameReviewDialog(
+                self.repository,
+                self.language,
+                standalone_image_path=Path(self.current_draft.image_path),
+                standalone_title=(
+                    self.title_edit.text().strip()
+                    or text(self.language, "draft")
+                ),
+                standalone_timecode=self.inspector_time.text(),
+                parent=self,
+            )
+            self._present_frame_review(dialog)
+            return
+        if self.current_capture is not None:
+            self._open_frame_review(
+                self.current_capture.id,
+                self._capture_ids_from_list(self.capture_list),
+            )
+
+    def _review_gallery_detail(self) -> None:
+        if self.current_gallery_capture is None:
+            return
+        self._open_frame_review(
+            self.current_gallery_capture.id,
+            self._last_gallery_capture_ids,
+        )
+
+    def _open_frame_review(
+        self,
+        capture_id: str,
+        capture_ids: list[str],
+    ) -> None:
+        capture = self.repository.get_capture(capture_id)
+        if capture is None:
+            return
+        ordered_ids = list(dict.fromkeys(capture_ids))
+        if capture_id not in ordered_ids:
+            ordered_ids.append(capture_id)
+        fps = 24.0
+        if (
+            self.session.video is not None
+            and self.current_project is not None
+            and capture.project_id == self.current_project.id
+        ):
+            fps = self.session.video.metadata.fps
+        dialog = FrameReviewDialog(
+            self.repository,
+            self.language,
+            capture_ids=ordered_ids,
+            initial_capture_id=capture_id,
+            fps=fps,
+            parent=self,
+        )
+        self._present_frame_review(dialog)
+
+    def _present_frame_review(self, dialog: FrameReviewDialog) -> None:
+        self.player.pause()
+        dialog.setStyleSheet(stylesheet(self.theme, self.language))
+        self._apply_pointing_hand_cursors(dialog)
+        dialog.setWindowState(
+            dialog.windowState() | Qt.WindowState.WindowFullScreen
+        )
+        dialog.exec()
 
     def refresh_gallery(self) -> None:
         self.gallery_list.clear()
