@@ -54,7 +54,8 @@ copied into the database or included in a library export.
   lighting style, key quality, mood, tags, title, and notes.
 - Search across all manually entered information.
 - Filter frames by category or HEX code—with or without `#`—and include
-  perceptually similar colors.
+  exact matches from all five palette swatches plus perceptually similar
+  matches based on the two dominant colors.
 - Browse selected frames in a dedicated Gallery Workspace.
 - Resize thumbnails independently in Capture and Gallery workspaces.
 - Add non-destructive annotations with freehand pen, line, arrow, rectangle,
@@ -295,7 +296,7 @@ Website: [storyeco.xyz](https://storyeco.xyz)
   نورپردازی، کیفیت نور <bdi dir="ltr">Key</bdi>، مود، تگ‌ها، عنوان و یادداشت
 - جست‌وجو در تمام اطلاعاتی که کاربر وارد کرده است
 - فیلتر براساس دسته‌بندی‌ها یا کد <bdi dir="ltr">HEX</bdi> با یا بدون
-  علامت `#` و نمایش رنگ‌های نزدیک از نظر ادراکی
+  علامت `#`؛ تطبیق دقیق در هر پنج بلوک و شباهت ادراکی براساس دو رنگ غالب
 - مرور فریم‌ها در فضای کاری اختصاصی <bdi dir="ltr">Gallery</bdi>
 - تغییر مستقل اندازهٔ <bdi dir="ltr">Thumbnail</bdi>ها در <bdi dir="ltr">Capture</bdi> و <bdi dir="ltr">Gallery</bdi>
 - حاشیه‌نویسی غیرمخرب روی فریم‌ها با قلم آزاد، خط، فلش، مستطیل، بیضی و متن

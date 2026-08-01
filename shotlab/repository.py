@@ -630,14 +630,28 @@ class Repository:
             return captures
         scored: list[tuple[float, Capture]] = []
         for capture in captures:
-            colors = [
+            all_colors = [
                 str(color)
                 for color in capture.analysis.get("dominant_colors", [])
-            ][:2]
-            distances = [
-                closest_palette_distance(colors, target)
-                for target in targets
             ]
+            normalized_colors = {
+                _normalize_hex_color(color) or color.upper()
+                for color in all_colors
+            }
+            dominant_colors = all_colors[:2]
+            distances = []
+            for target in targets:
+                normalized_target = (
+                    _normalize_hex_color(target) or target.upper()
+                )
+                distances.append(
+                    0.0
+                    if normalized_target in normalized_colors
+                    else closest_palette_distance(
+                        dominant_colors,
+                        normalized_target,
+                    )
+                )
             if all(
                 distance <= COLOR_SIMILARITY_THRESHOLD
                 for distance in distances

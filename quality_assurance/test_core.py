@@ -489,6 +489,7 @@ class RepositoryTests(unittest.TestCase):
             ("exact", "#737170"),
             ("near", "#7B7978"),
             ("far", "#2A6CB0"),
+            ("exact fifth", "#204050"),
         ):
             source = self.root / f"{name}.png"
             Image.new("RGB", (320, 180), color).save(source, "PNG")
@@ -504,29 +505,44 @@ class RepositoryTests(unittest.TestCase):
                 "dominant_colors": [
                     "#2A6CB0",
                     "#193D70",
-                    "#737170",
+                    "#8A4330",
                     "#101820",
                     "#7B7978",
                 ],
                 "color_percentages": [45.0, 30.0, 15.0, 7.0, 3.0],
             },
         )
-        searched = self.repository.search_captures("#737170")
-        self.assertEqual(
-            [capture.id for capture in searched],
-            [captures["exact"].id, captures["near"].id],
+        self.repository.update_capture_analysis(
+            captures["exact fifth"].id,
+            {
+                "dominant_colors": [
+                    "#204050",
+                    "#35596E",
+                    "#A04030",
+                    "#C09050",
+                    "#737170",
+                ],
+                "color_percentages": [45.0, 30.0, 15.0, 7.0, 3.0],
+            },
         )
+        searched = self.repository.search_captures("#737170")
+        searched_ids = [capture.id for capture in searched]
+        self.assertEqual(
+            set(searched_ids[:2]),
+            {captures["exact"].id, captures["exact fifth"].id},
+        )
+        self.assertEqual(searched_ids[2:], [captures["near"].id])
         searched_without_hash = self.repository.search_captures("737170")
         self.assertEqual(
             [capture.id for capture in searched_without_hash],
-            [captures["exact"].id, captures["near"].id],
+            searched_ids,
         )
         manually_filtered = self.repository.filter_captures(
             color_hex="737170",
         )
         self.assertEqual(
             [capture.id for capture in manually_filtered],
-            [captures["exact"].id, captures["near"].id],
+            searched_ids,
         )
         combined = self.repository.search_captures("near 737170")
         self.assertEqual(
