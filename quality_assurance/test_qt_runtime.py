@@ -70,6 +70,15 @@ class QtRuntimeSmokeTests(unittest.TestCase):
             canvas.reset_fit()
             self.assertAlmostEqual(canvas._scale(), 0.5, places=2)
 
+            small_path = Path(folder) / "small-frame.png"
+            small_pixmap = QPixmap(320, 180)
+            small_pixmap.fill(QColor("#6B4C2A"))
+            self.assertTrue(small_pixmap.save(str(small_path)))
+            canvas.set_image(small_path)
+            self.assertAlmostEqual(canvas._scale(), 2.0, places=2)
+            canvas.show_actual_size()
+            self.assertAlmostEqual(canvas._scale(), 1.0, places=2)
+
     def test_main_window_constructs_with_final_ui(self) -> None:
         with tempfile.TemporaryDirectory(prefix="shotlab-ui-test-") as folder:
             settings_root = Path(folder) / "settings"
