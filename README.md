@@ -23,6 +23,18 @@
 
 <a id="english"></a>
 
+<table width="100%">
+  <tr>
+    <td align="center">
+      <strong>🎥 ShotLab Introduction &amp; Tutorial</strong><br>
+      <span dir="rtl"><strong>🎥 معرفی و آموزش شات‌لب</strong></span><br><br>
+      <a href="https://youtu.be/D4DjuavzJTI?si=DGhcbuCi_xSblEti">▶ Watch on YouTube</a>
+      &nbsp;&nbsp;•&nbsp;&nbsp;
+      <a href="https://www.aparat.com/v/ubya408"><span dir="rtl">▶ تماشا در آپارات</span></a>
+    </td>
+  </tr>
+</table>
+
 ## 🎬 About ShotLab
 
 ShotLab is a tool I originally built for myself through vibe coding with
