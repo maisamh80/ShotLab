@@ -23,9 +23,9 @@
 
 <a id="english"></a>
 
-<table width="100%">
+<table align="center" width="100%">
   <tr>
-    <td align="center">
+    <td width="100%" align="center">
       <strong>🎥 ShotLab Introduction &amp; Tutorial</strong><br>
       <span dir="rtl"><strong>🎥 معرفی و آموزش شات‌لب</strong></span><br><br>
       <a href="https://youtu.be/D4DjuavzJTI?si=DGhcbuCi_xSblEti">▶ Watch on YouTube</a>
